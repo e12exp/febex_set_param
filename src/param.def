@@ -55,22 +55,30 @@ BASE_ADDR(0x300140)
 DEF_VAR_BOOL(opmode_run, 0, 4, 0, 0)
 DEF_VAR_BOOL(opmode_dbg, 0, 4, 1, 0)
 DEF_VAR_BOOL(opmode_invert, 0, 4, 2, 0)
-DEF_VAR_BOOL(opmode_use_internal_trigger, 0, 4, 3, 0)
-DEF_VAR_BOOL(opmode_use_external_trigger, 0, 4, 4, 0)
-DEF_VAR_BOOL(opmode_use_coincidence_trigger, 0, 4, 5, 0)
-DEF_VAR_BOOL(opmode_feedback_trigger, 0, 4, 6, 0)
 
 DEF_VAR_INT(tracemode, 0, 4, 8, 0xf, 0)
 
 DEF_VAR_INT(cfd_hysteresis_threshold, 0, 4, 0x10, 0x1b, 0)
 
 BASE_ADDR(0x300180)
-DEF_VAR_INT(cfd_threshold, 0, 4, 0, 0xb, 0)
+DEF_VAR_INT(cfd_threshold_high, 0, 4, 0, 0xb, 0)
 DEF_VAR_INT(cfd_delay, 0, 4, 0x10, 0x19, 0)
 
 BASE_ADDR(0x3001c0)
-DEF_VAR_INT(int_trigger_delay, 0, 4, 0, 5, 0)
-DEF_VAR_INT(ext_gate_length, 0, 4, 8, 0xd, 0)
+DEF_VAR_INT(int_trigger_delay, 0, 4, 0, 7, 0)
+DEF_VAR_INT(ext_gate_length, 0, 4, 8, 15, 0)
+DEF_VAR_INT(int_gate_length, 0, 4, 16, 23, 0)
+
+DEF_VAR_BOOL(trigger_use_internal, 0, 4, 24, 0)
+DEF_VAR_BOOL(trigger_use_external, 0, 4, 25, 0)
+DEF_VAR_BOOL(trigger_use_coincidence, 0, 4, 26, 0)
+DEF_VAR_BOOL(trigger_feedback_low, 0, 4, 27, 0) 
+DEF_VAR_BOOL(trigger_feedback_high, 0, 4, 28, 0)
+DEF_VAR_BOOL(trigger_enable_internal_gate, 0, 4, 29, 0) 
+DEF_VAR_BOOL(trigger_enable_external_gate, 0, 4, 30, 0) 
+
+BASE_ADDR(0x300240)
+DEF_VAR_INT(cfd_threshold_low, 0, 4, 0, 0xb, 0)
 
 // Virtual registers
 

@@ -1,0 +1,83 @@
+#include "../data.h"
+#include "../consoleinterface.h"
+#include "../paramdef.h"
+
+IMPL(list)
+{
+  ARGS_INIT
+  ARG_INT(sfp)
+  ARG_INT(mod)
+
+  int c, v, sfp_min, sfp_max, mod_min, mod_max;
+  conf_value_data_t *var;
+
+  uint32_t val_max;
+
+  print_num_modules();
+
+  if(sfp < 0)
+  {
+    sfp_min = 0; sfp_max = g_num_sfp - 1;
+  }
+  else
+  {
+    sfp_min = sfp_max = sfp;
+  }
+  if(sfp_max >= g_num_sfp)
+  {
+    fprintf(stderr, "Invalid SFP\n");
+    return 0;;
+  }
+
+  if(mod < 0)
+  {
+    mod_min = 0; mod_max = -1;
+  }
+  else
+  {
+    mod_min = mod_max = mod;
+  }
+
+  if(!(mod_max == -1 || mod_max < g_num_modules[sfp_max]))
+  {
+    fprintf(stderr, "Invalid module\n");
+    return 0;
+  }
+
+  for(sfp = sfp_min; sfp <= sfp_max; sfp++)
+  {
+    printf("SFP %d\n", sfp);
+
+    for(mod = mod_min; mod <= (mod_max == -1 ? g_num_modules[sfp] - 1 : mod_max); mod++)
+    {
+      printf("+- Module %d\n", mod);
+      for(v = 0; v < g_num_global_config_vars; v++)
+      {
+	var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
+	val_max = var->value_def->bitmask >> var->value_def->lowbit;
+
+	printf("%d.%03d.%-40s (0x%06x) [0 - %5d]: %d\n", sfp, mod,
+	    var->value_def->name, var->value_def->addr,
+	    val_max, var->value_data);
+      }
+      printf("\n");
+
+      for(c = 0; c < 16; c++)
+      {
+	for(v = 0; v < g_num_channel_config_vars; v++)
+	{
+	  var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
+	  val_max = var->value_def->bitmask >> var->value_def->lowbit;
+
+	  printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5d]: %d\n", sfp, mod, c,
+	      var->value_def->name, var->value_def->addr,
+	      val_max, var->value_data);
+	}
+	printf("\n");
+      }
+    }
+  }
+
+  return 1;
+}
+

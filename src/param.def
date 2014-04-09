@@ -48,9 +48,6 @@ NEXT_REG
 
 DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0)
 
-BASE_ADDR(0x300138)
-DEF_VAR_INT(select_adc, 0, 0, 0x0, 0x3, 4)
-
 BASE_ADDR(0x300140)
 DEF_VAR_BOOL(opmode_run, 0, 4, 0, 0)
 DEF_VAR_BOOL(opmode_dbg, 0, 4, 1, 0)

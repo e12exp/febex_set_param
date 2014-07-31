@@ -116,7 +116,7 @@ uint8_t interpret_command(char *cmd, int argc, char **argv)
 	if(!check_arguments(&commands[i], &argc, argv))
 	{
 	  fprintf(stderr, "Invalid arguments for command %s\n", cmd);
-	  return 1;
+	  return 2;
 	}
         (*commands[i].func)(argc, argv);
 	return 1;
@@ -128,17 +128,18 @@ uint8_t interpret_command(char *cmd, int argc, char **argv)
 	{
 	  argc++;
 	  fprintf(stderr, "Invalid arguments for command %s %s\n", cmd, argv[0]);
-	  return 1;
+	  return 2;
 	}
 	argc++;
-	(*commands[i].func)(argc, &argv[1]);
-	return 1;
+	//on error, return 2. this will not hinder the interactive mode
+	//but the batch mode can exit with the correct status. 
+	return 1+!((*commands[i].func)(argc, &argv[1]));
       }
     }
   }
 
   fprintf(stderr, "Unkown command %s.\n", cmd);
 
-  return 1;
+  return 2;
 }
 

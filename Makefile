@@ -27,3 +27,10 @@ clean:
 	@rm -rf o $(TARGET_BIN) $(TARGET_STATIC)
 	@echo "Cleaning complete"
 
+#optionally, check out builds for different branches to build/<branch-name>
+all-branches: build/master build/117
+
+build/%: .git
+	mkdir -p $@
+	git archive $(shell basename $@ ) | tar -x -C $@
+	$(MAKE) -C $@

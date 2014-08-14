@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	  && strcmp("list", argv[2])
 	  && strcmp("help", argv[2])
 	  )
-	interpret_command("save", 0, 0);
+	res+=write_file()!=1;
       return res;
     }
 

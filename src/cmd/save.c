@@ -3,10 +3,10 @@
 IMPL(save)
 {
   fill_regdata_from_module_data();
-  write_file();
+  int r=write_file();
+  if(r)
+    printf("Data written.\n");
 
-  printf("Data written.\n");
-
-  return 1;
+  return r;
 }
 

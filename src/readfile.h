@@ -6,7 +6,7 @@ void fill_data_from_file();
 
 void fill_regdata_from_module_data();
 
-void write_file();
+int write_file();
 
 #endif
 

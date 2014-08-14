@@ -55,7 +55,7 @@ int readfile(char *fname)
   return 1;
 }
 
-void write_file()
+int write_file()
 {
   FILE *fd;
   regblock_t *block;
@@ -63,7 +63,7 @@ void write_file()
   if(!(fd = fopen(g_fname, "wb")))
   {
     fprintf(stderr, "Could not open file %s for writing.\n", g_fname);
-    return;
+    return 0;
   }
 
   fwrite(&g_num_sfp, 1, 1, fd);
@@ -86,6 +86,7 @@ void write_file()
   }
 
   fclose(fd);
+  return 1;
 }
 
 void fill_data_from_file()

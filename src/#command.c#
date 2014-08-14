@@ -118,7 +118,8 @@ uint8_t interpret_command(char *cmd, int argc, char **argv)
 	  fprintf(stderr, "Invalid arguments for command %s\n", cmd);
 	  return 2;
 	}
-	return 1+!((*commands[i].func)(argc, argv));
+        (*commands[i].func)(argc, argv);
+	return 1;
       }
       else if(argc >= 1 && strcmp(argv[0], commands[i].subcmd) == 0)
       {

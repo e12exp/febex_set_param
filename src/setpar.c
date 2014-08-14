@@ -41,7 +41,10 @@ int main(int argc, char **argv)
 	  && strcmp("list", argv[2])
 	  && strcmp("help", argv[2])
 	  )
-	res+=write_file()!=1;
+	{
+	  fill_regdata_from_module_data();
+	  res+=write_file()!=1;
+	}
       return res;
     }
 

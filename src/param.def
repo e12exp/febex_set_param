@@ -47,6 +47,14 @@ DEF_VAR_INT(qpid_peaktime, 1, 0, 0x18, 0x1b, 0)
 NEXT_REG
 
 DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0)
+NEXT_REG
+
+DEF_VAR_INT(trace_length, 1, 0, 0x00, 0x0f, 0)
+DEF_VAR_INT(logic_gate_size, 1, 0, 0x10, 0x1f, 0)
+NEXT_REG
+
+DEF_VAR_INT(tot_threshold, 1, 0, 0x00, 0x12, 0)
+DEF_VAR_INT(tot_enabled, 1, 0, 0x18, 0x18, 0)
 
 BASE_ADDR(0x300138)
 DEF_VAR_INT(select_adc, 0, 0, 0x0, 0x3, 4)

@@ -23,6 +23,8 @@ typedef struct
   uint32_t bitmask;
   uint8_t lowbit;
   uint32_t channel_shift;
+
+  uint8_t vsigned;
 }
 conf_value_def_t;
 

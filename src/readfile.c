@@ -109,6 +109,12 @@ void fill_data_from_file()
 
         search_register_data(sfp, mod, v->addr, &dat);
         dat = (dat & v->bitmask) >> v->lowbit;
+	// Check sign bit
+	if(v->vsigned && (dat & ((v->bitmask >> (v->lowbit + 1)) + 1)) != 0)
+	{
+		// Signed, negative number => Fill upper bits with 1 instead of 0
+		dat |= (0xFFFFFFFF & ~(v->bitmask >> v->lowbit));
+	}
         g_arr_module_data[sfp][mod].arr_global_cfg[ngv].value_data = dat;
       }
 
@@ -122,6 +128,12 @@ void fill_data_from_file()
 	{
 	  search_register_data(sfp, mod, addr, &dat),
 	  dat = (dat & mask) >> lowbit;
+	  // Check sign bit
+	  if(v->vsigned && (dat & ((v->bitmask >> (v->lowbit + 1)) + 1)) != 0)
+	  {
+		// Signed, negative number => Fill upper bits with 1 instead of 0
+		dat |= (0xFFFFFFFF & ~(v->bitmask >> v->lowbit));
+	  }
 	  g_arr_module_data[sfp][mod].arr_channel_cfg[c][ncv].value_data = dat;
 
 	  addr += v->channel_offset;

@@ -11,7 +11,7 @@ IMPL(list)
   int c, v, sfp_min, sfp_max, mod_min, mod_max;
   conf_value_data_t *var;
 
-  uint32_t val_max;
+  int32_t val_min, val_max;
 
   print_num_modules();
 
@@ -54,11 +54,18 @@ IMPL(list)
       for(v = 0; v < g_num_global_config_vars; v++)
       {
 	var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
+	val_min = 0;
 	val_max = var->value_def->bitmask >> var->value_def->lowbit;
 
-	printf("%d.%03d.%-40s (0x%06x) [0 - %5d]: %d\n", sfp, mod,
+	if(var->value_def->vsigned)
+	{
+		val_min = -(val_max/2 + 1);
+		val_max /= 2;
+	}
+
+	printf("%d.%03d.%-40s (0x%06x) [%d - %5d]: %d\n", sfp, mod,
 	    var->value_def->name, var->value_def->addr,
-	    val_max, var->value_data);
+	    val_min, val_max, var->value_data);
       }
       printf("\n");
 
@@ -67,7 +74,14 @@ IMPL(list)
 	for(v = 0; v < g_num_channel_config_vars; v++)
 	{
 	  var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
+	  val_min = 0;
 	  val_max = var->value_def->bitmask >> var->value_def->lowbit;
+
+	  if(var->value_def->vsigned)
+	  {
+		val_min = -(val_max/2 + 1);
+		val_max /= 2;
+	  }
 
 	  printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5d]: %d\n", sfp, mod, c,
 	      var->value_def->name, var->value_def->addr,

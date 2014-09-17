@@ -10,7 +10,7 @@ conf_list_t *g_conf_list_current;
 
 #define BASE_ADDR(addr) c_addr = addr;
 
-#define DEF_VAR(_name, _type, _global, _addr, _offset, _low, _high, _shift) \
+#define DEF_VAR(_name, _type, _global, _addr, _offset, _low, _high, _shift, _signed) \
   l = (conf_list_t*)malloc(sizeof(conf_list_t)); \
   l->v.name = #_name; \
   l->v.type = _type; \
@@ -21,11 +21,14 @@ conf_list_t *g_conf_list_current;
   l->v.bitmask &= ~((1 << _low) - 1); \
   l->v.lowbit = _low; \
   l->v.channel_shift = _shift; \
+  l->v.vsigned = _signed; \
   conf_list_add(l);
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
-  DEF_VAR(_name, conf_type_int, _global, c_addr, _offset, _low, _high, _shift)
+  DEF_VAR(_name, conf_type_int, _global, c_addr, _offset, _low, _high, _shift, 0)
 
+#define DEF_VAR_INT_SIGNED(_name, _global, _offset, _low, _high, _shift) \
+  DEF_VAR(_name, conf_type_int, _global, c_addr, _offset, _low, _high, _shift, 1)
 
 #define DEF_VAR_BOOL(_name, _global, _offset, _low, _shift) \
   DEF_VAR_INT(_name, _global, _offset, _low, _low, _shift)

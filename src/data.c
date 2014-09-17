@@ -137,7 +137,7 @@ conf_value_data_t *config_array_search(conf_value_data_t *array, int n, char *na
   return NULL;
 }
 
-uint32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name, uint32_t *val_max)
+int32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name, int32_t *val_min, int32_t *val_max)
 {
   if(sfp >= g_num_sfp)
     return NULL;
@@ -164,7 +164,19 @@ uint32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *nam
     return NULL;
 
   if(val_max != NULL)
+  {
     *val_max = d->value_def->bitmask >> d->value_def->lowbit;
+    if(d->value_def->vsigned)
+      *val_max /= 2;
+  }
+
+  if(val_min != NULL)
+  {
+	if(d->value_def->vsigned)
+		*val_min = -(*val_max) - 1;
+	else
+		*val_min = 0;
+  }
 
   return &d->value_data;
 }

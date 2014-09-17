@@ -8,7 +8,7 @@
 typedef struct
 {
   conf_value_def_t  *value_def;
-  uint32_t	    value_data;
+  int32_t	    value_data;
 }
 conf_value_data_t;
 
@@ -34,7 +34,7 @@ uint8_t module_data_remove_module(uint8_t sfp, uint8_t module, uint8_t num);
 
 void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data);
 
-uint32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name, uint32_t *val_max);
+int32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name, int32_t *val_min, int32_t *val_max);
 
 #endif
 

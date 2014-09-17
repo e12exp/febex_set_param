@@ -88,8 +88,8 @@ IMPL(set)
   ARG_STR(variable)
   ARG_STR(str_value)
 
-  uint32_t value = atoi(str_value);
-  uint32_t val_max;
+  int32_t value = atoi(str_value);
+  int32_t val_min, val_max;
 
   int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;
   char *name;
@@ -103,7 +103,7 @@ IMPL(set)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
-	 uint32_t *conf_val = module_data_get(sfp, mod, c, name, &val_max);
+	 int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max);
 
  	 if(conf_val == NULL)
  	 {
@@ -111,9 +111,9 @@ IMPL(set)
  	   return 0;
  	 }
 
-	 if(value < 0 || value > val_max)
+	 if(value < val_min || value > val_max)
 	 {
-	   printf("Value out of range. Allowed: 0 - %d\n", val_max);
+	   printf("Value out of range. Allowed: %d - %d\n", val_min, val_max);
 	   return 0;
 	 }
 
@@ -130,7 +130,7 @@ IMPL(get)
   ARGS_INIT
   ARG_STR(variable)
 
-  uint32_t val_max;
+  int32_t val_min, val_max;
   int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;
   char *name;
 
@@ -143,7 +143,7 @@ IMPL(get)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
-	uint32_t *conf_val = module_data_get(sfp, mod, c, name, &val_max);
+	int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max);
 
 	if(conf_val == NULL)
  	 {
@@ -152,9 +152,9 @@ IMPL(get)
  	 }
 
 	if(c == -1)
-	  printf("%d.%03d.%-40s [0 - %5d]: %d\n", sfp, mod, name, val_max, *conf_val);
+	  printf("%d.%03d.%-40s [%d - %5d]: %d\n", sfp, mod, name, val_min, val_max, *conf_val);
 	else
-	  printf("%d.%03d.%02d.%-37s [0 - %5d]: %d\n", sfp, mod, c, name, val_max, *conf_val);
+	  printf("%d.%03d.%02d.%-37s [%d - %5d]: %d\n", sfp, mod, c, name, val_min, val_max, *conf_val);
       }
     }
   }

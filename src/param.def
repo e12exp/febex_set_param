@@ -68,6 +68,8 @@ BASE_ADDR(0x300140)
 DEF_VAR_BOOL(opmode_run, 0, 4, 0, 0)
 DEF_VAR_BOOL(opmode_dbg, 0, 4, 1, 0)
 DEF_VAR_BOOL(opmode_invert, 0, 4, 2, 0)
+DEF_VAR_BOOL(enable_proton_trigger, 0, 4, 3, 0)
+DEF_VAR_BOOL(proton_trigger_coincidence_mode, 0, 4, 4, 0)
 
 DEF_VAR_INT(tracemode, 0, 4, 8, 0xf, 0)
 
@@ -92,6 +94,11 @@ DEF_VAR_BOOL(trigger_enable_external_gate, 0, 4, 30, 0)
 
 BASE_ADDR(0x300240)
 DEF_VAR_INT(cfd_threshold_low, 0, 4, 0, 0xb, 0)
+DEF_VAR_INT(proton_trigger_threshold, 0, 4, 0x10, 0x1b, 0)
+
+BASE_ADDR(0x300280)
+DEF_VAR_INT(proton_trigger_timing_delay, 0, 4, 0x00, 0x07, 0)
+DEF_VAR_INT(proton_trigger_gate_length, 0, 4, 0x08, 0x0f, 0)
 
 // Virtual registers
 

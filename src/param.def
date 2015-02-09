@@ -91,6 +91,7 @@ DEF_VAR_BOOL(trigger_feedback_low, 0, 4, 27, 0)
 DEF_VAR_BOOL(trigger_feedback_high, 0, 4, 28, 0)
 DEF_VAR_BOOL(trigger_enable_internal_gate, 0, 4, 29, 0) 
 DEF_VAR_BOOL(trigger_enable_external_gate, 0, 4, 30, 0) 
+DEF_VAR_BOOL(trigger_walk_correction, 0, 4, 31, 0) 
 
 BASE_ADDR(0x300240)
 DEF_VAR_INT(cfd_threshold_low, 0, 4, 0, 0xb, 0)

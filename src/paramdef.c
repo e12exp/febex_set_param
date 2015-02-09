@@ -18,7 +18,7 @@ conf_list_t *g_conf_list_current;
   l->v.addr = _addr; \
   l->v.channel_offset = _offset; \
   l->v.bitmask = (uint32_t)(((uint64_t)1 << ((uint64_t)_high + 1)) - 1); \
-  l->v.bitmask &= ~((1 << _low) - 1); \
+  l->v.bitmask &= ~(uint32_t)(((uint64_t)1 << (uint64_t)_low) - 1); \
   l->v.lowbit = _low; \
   l->v.channel_shift = _shift; \
   l->v.vsigned = _signed; \

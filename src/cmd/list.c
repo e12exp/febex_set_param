@@ -1,6 +1,7 @@
 #include "../data.h"
 #include "../consoleinterface.h"
 #include "../paramdef.h"
+#include "../binaryval.h"
 
 IMPL(list)
 {
@@ -63,9 +64,18 @@ IMPL(list)
 		val_max /= 2;
 	}
 
-	printf("%d.%03d.%-40s (0x%06x) [%d - %5d]: %d\n", sfp, mod,
-	    var->value_def->name, var->value_def->addr,
-	    val_min, val_max, var->value_data);
+        if(var->value_def->type == conf_type_mask)
+        {
+            printf("%d.%03d.%-40s (0x%06x): 0b", sfp, mod, var->value_def->name,
+                  var->value_def->addr);
+            print_binary_val(var->value_data, val_max);
+        }
+        else
+        {
+	    printf("%d.%03d.%-40s (0x%06x) [%d - %5d]: %d\n", sfp, mod,
+	       var->value_def->name, var->value_def->addr,
+	       val_min, val_max, var->value_data);
+        }
       }
       printf("\n");
 
@@ -83,9 +93,18 @@ IMPL(list)
 		val_max /= 2;
 	  }
 
-	  printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5d]: %d\n", sfp, mod, c,
+          if(var->value_def->type == conf_type_mask)
+          {
+              printf("%d.%03d.%02d.%-37s (0x%06x): 0b", sfp, mod, c, var->value_def->name,
+                    var->value_def->addr);
+              print_binary_val(var->value_data, val_max);
+          }
+          else
+          {
+	    printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5d]: %d\n", sfp, mod, c,
 	      var->value_def->name, var->value_def->addr,
 	      val_max, var->value_data);
+          }
 	}
 	printf("\n");
       }

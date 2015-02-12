@@ -5,7 +5,7 @@ GCC_FLAGS=-g -Wall
 
 TARGET_BIN=setpar
 
-OBJ_BIN=o/setpar.o o/filestruct.o o/readfile.o o/paramdef.o o/data.o o/consoleinterface.o o/command.o
+OBJ_BIN=o/setpar.o o/filestruct.o o/readfile.o o/paramdef.o o/data.o o/consoleinterface.o o/command.o o/binaryval.o
 
 .PHONY: all clean
 

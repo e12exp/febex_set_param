@@ -33,6 +33,9 @@ conf_list_t *g_conf_list_current;
 #define DEF_VAR_BOOL(_name, _global, _offset, _low, _shift) \
   DEF_VAR_INT(_name, _global, _offset, _low, _low, _shift)
 
+#define DEF_VAR_MASK(_name, _global, _offset, _low, _high, _shift) \
+   DEF_VAR(_name, conf_type_mask, _global, c_addr, _offset, _low, _high, _shift, 0)
+
 #define NEXT_REG c_addr += 4;
 
 void conf_list_add(conf_list_t *l)

@@ -6,7 +6,8 @@
 typedef enum
 {
   conf_type_int = 1,
-  conf_type_macro_qpid = 2
+  conf_type_macro_qpid = 2,
+  conf_type_mask = 3
 }
 conf_type_t;
 

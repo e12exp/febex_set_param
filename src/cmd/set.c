@@ -88,7 +88,8 @@ IMPL(set)
   ARG_STR(variable)
   ARG_STR(str_value)
 
-  int32_t value = atoi(str_value);
+//  int32_t value = atoi(str_value);
+  int32_t value = strtol(str_value, NULL, 0);
   int32_t val_min, val_max;
 
   int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;

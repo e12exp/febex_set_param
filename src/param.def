@@ -47,6 +47,7 @@ DEF_VAR_INT(qpid_peaktime, 1, 0, 0x18, 0x1b, 0)
 NEXT_REG
 
 DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
+DEF_VAR_INT(num_events_readout, 1, 0, 0x18, 0x1f, 0)
 NEXT_REG
 
 DEF_VAR_INT(trace_length, 1, 0, 0x00, 0x0f, 0)
@@ -68,8 +69,13 @@ BASE_ADDR(0x300140)
 DEF_VAR_BOOL(opmode_run, 0, 4, 0, 0)
 DEF_VAR_BOOL(opmode_dbg, 0, 4, 1, 0)
 DEF_VAR_BOOL(opmode_invert, 0, 4, 2, 0)
-DEF_VAR_BOOL(enable_proton_trigger, 0, 4, 3, 0)
-DEF_VAR_BOOL(proton_trigger_coincidence_mode, 0, 4, 4, 0)
+
+DEF_VAR_BOOL(proton_trigger_enable, 0, 4, 3, 0)
+DEF_VAR_BOOL(proton_trigger_walk_correction, 0, 4, 4, 0)
+
+DEF_VAR_BOOL(trigger_feedback_busy, 0, 4, 5, 0)
+DEF_VAR_BOOL(trigger_enable_validation, 0, 4, 6, 0)
+DEF_VAR_BOOL(trigger_enable_walk_correction, 0, 4, 7, 0)
 
 DEF_VAR_INT(tracemode, 0, 4, 8, 0xf, 0)
 
@@ -80,26 +86,40 @@ DEF_VAR_INT(cfd_threshold_high, 0, 4, 0, 0xb, 0)
 DEF_VAR_INT(cfd_delay, 0, 4, 0x10, 0x19, 0)
 
 BASE_ADDR(0x3001c0)
-DEF_VAR_INT(int_trigger_delay, 0, 4, 0, 7, 0)
-DEF_VAR_INT(ext_gate_length, 0, 4, 8, 15, 0)
-DEF_VAR_INT(int_gate_length, 0, 4, 16, 23, 0)
+DEF_VAR_INT(trigger_timing_delay, 0, 4, 0, 7, 0)
+DEF_VAR_INT(trigger_validation_gate_length, 0, 4, 8, 15, 0)
+DEF_VAR_INT(trigger_validation_delay, 0, 4, 16, 23, 0)
+DEF_VAR_INT(proton_trigger_gate_length, 0, 4, 0x18, 0x1f, 0)
 
-DEF_VAR_BOOL(trigger_use_internal, 0, 4, 24, 0)
-DEF_VAR_BOOL(trigger_use_external, 0, 4, 25, 0)
-DEF_VAR_BOOL(trigger_use_coincidence, 0, 4, 26, 0)
-DEF_VAR_BOOL(trigger_feedback_low, 0, 4, 27, 0) 
-DEF_VAR_BOOL(trigger_feedback_high, 0, 4, 28, 0)
-DEF_VAR_BOOL(trigger_enable_internal_gate, 0, 4, 29, 0) 
-DEF_VAR_BOOL(trigger_enable_external_gate, 0, 4, 30, 0) 
-DEF_VAR_BOOL(trigger_walk_correction, 0, 4, 31, 0) 
+BASE_ADDR(0x300200)
+DEF_VAR_MASK(iomatrix_gpt1, 1, 0, 0, 15, 0)
+DEF_VAR_MASK(iomatrix_gpt2, 1, 0, 16, 31, 0)
+
+NEXT_REG
+DEF_VAR_MASK(iomatrix_gpt3, 1, 0, 0, 15, 0)
+DEF_VAR_MASK(iomatrix_gpt4, 1, 0, 16, 31, 0)
+
+NEXT_REG
+DEF_VAR_MASK(iomatrix_t1, 1, 0, 0, 15, 0)
+DEF_VAR_MASK(iomatrix_t3, 1, 0, 16, 31, 0)
+
+NEXT_REG
+DEF_VAR_MASK(iomatrix_rorq, 1, 0, 0, 15, 0)
+DEF_VAR_MASK(iomatrix_busy, 1, 0, 16, 31, 0)
 
 BASE_ADDR(0x300240)
 DEF_VAR_INT(cfd_threshold_low, 0, 4, 0, 0xb, 0)
 DEF_VAR_INT(proton_trigger_threshold, 0, 4, 0x10, 0x1b, 0)
 
 BASE_ADDR(0x300280)
-DEF_VAR_INT(proton_trigger_timing_delay, 0, 4, 0x00, 0x07, 0)
-DEF_VAR_INT(proton_trigger_gate_length, 0, 4, 0x08, 0x0f, 0)
+DEF_VAR_MASK(trigger_timing_src, 0, 4, 0x00, 0x09, 0)
+DEF_VAR_MASK(trigger_validation_src, 0, 4, 0x10, 0x19, 0)
+
+BASE_ADDR(0x3002C0)
+DEF_VAR_MASK(trigger_timing_dst, 0, 4, 0x00, 0x06, 0)
+DEF_VAR_MASK(trigger_gamma_dst, 0, 4, 0x08, 0x0E, 0)
+DEF_VAR_MASK(trigger_proton_dst, 0, 4, 0x10, 0x16, 0)
+DEF_VAR_INT(proton_trigger_timing_delay, 0, 4, 0x18, 0x1F, 0)
 
 // Virtual registers
 

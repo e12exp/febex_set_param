@@ -1,0 +1,83 @@
+DEF_FIRMWARE(0x02000027, "pulser_2.0", "CALIFA Pulser with GOSIP readout", 0x02000027, 0x02000027, 0x0200ffff)
+
+BASE_ADDR(0x300104)
+
+DEF_VAR_INT(num_events_readout, 1, 0, 0x00, 0x08, 0)
+
+BASE_ADDR(0x300400)
+
+DEF_VAR_BOOL(enable_pulser, 1, 0, 0x00, 0)
+DEF_VAR_INT(integration_mode, 1, 0, 0x04, 0x05, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(pulse_mode, 1, 0, 0x00, 0x02, 0)
+DEF_VAR_INT(amplitude_mode, 1, 0, 0x04, 0x04, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(nf, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(ns, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(e_const, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(e_min, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(e_max, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(e_step, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(duty_0, 1, 0, 0x00, 0x07, 0)
+NEXT_REG
+DEF_VAR_INT(duty_1, 1, 0, 0x00, 0x07, 0)
+NEXT_REG
+DEF_VAR_INT(duty_2, 1, 0, 0x00, 0x07, 0)
+NEXT_REG
+DEF_VAR_INT(duty_3, 1, 0, 0x00, 0x07, 0)
+
+BASE_ADDR(0x300440)
+
+DEF_VAR_INT(decay_const_1_l, 1, 0, 0x00, 0x07, 0)
+NEXT_REG
+DEF_VAR_INT(decay_const_1_h, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(decay_const_2_l, 1, 0, 0x00, 0x07, 0)
+NEXT_REG
+DEF_VAR_INT(decay_const_2_h, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(shift_q, 1, 0, 0x00, 0x03, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(trigger_length, 1, 0, 0x00, 0x07, 0)
+
+BASE_ADDR(0x300460)
+
+DEF_VAR_MASK(ext_trigger, 1, 0, 0x00, 0x07, 0)
+
+BASE_ADDR(0x300500)
+
+DEF_VAR_MASK(output_channel, 1, 0, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_BOOL(output_polarity, 1, 0, 0x00, 0)
+DEF_VAR_INT(output_mode, 1, 0, 0x04, 0x05, 0)
+

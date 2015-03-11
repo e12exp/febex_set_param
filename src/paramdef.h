@@ -37,14 +37,46 @@ typedef struct s_conf_list
 }
 conf_list_t;
 
+typedef struct
+{
+  uint32_t id;
+  char *name;
+  char *description;
+
+  uint32_t fw_min;
+  uint32_t fw_max;
+  uint32_t fw_recommended;
+
+  uint16_t num_global_config_vars;
+  uint16_t num_channel_config_vars;
+
+  conf_list_t *conf_list_first;
+  conf_list_t *conf_list_current;
+}
+firmware_def_t;
+
+typedef struct s_firmware_list
+{
+  firmware_def_t fw;
+
+  struct s_firmware_list *next;
+}
+firmware_list_t;
+
 extern uint8_t g_num_global_config_vars;
 extern uint8_t g_num_channel_config_vars;
 
 extern conf_list_t *g_conf_list_first;
 extern conf_list_t *g_conf_list_current;
 
-conf_value_def_t *conf_list_first();
-conf_value_def_t *conf_list_next();
+conf_value_def_t *conf_list_first(firmware_def_t *fw);
+conf_value_def_t *conf_list_next(firmware_def_t *fw);
+
+firmware_def_t *fw_list_first();
+firmware_def_t *fw_list_next();
+
+firmware_def_t *get_firmware_def(uint32_t id);
+uint32_t get_firmware_id(const char *name);
 
 void register_vars();
 

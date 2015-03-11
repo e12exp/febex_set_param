@@ -9,7 +9,7 @@ int cmd_impl_help(int argc, char **argv);
 cmd_impl_t commands[] =
 {
   CMDS(add, sfp, 0, ARGS(), 1, ARGS(ARG(num, 1))),
-  CMDS(add, module, 1, ARGS("sfp"), 1, ARGS(ARG(num, 1))),
+  CMDS(add, module, 1, ARGS("sfp"), 2, ARGS(ARG(num, 1), ARG(firmware, default))),
   CMDS(rm, module, 2, ARGS("sfp", "module"), 1, ARGS(ARG(num, 1))),
   CMDS(cp, module, 3, ARGS("src-sfp", "src-module", "dst-sfp"), 1, ARGS(ARG(num, 1))),
   CMD(list, 0, ARGS(), 2, ARGS(ARG(sfp, -1), ARG(module, -1))),

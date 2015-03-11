@@ -1,12 +1,24 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "paramdef.h"
 
-uint8_t g_num_global_config_vars;
-uint8_t g_num_channel_config_vars;
+uint16_t g_num_firmwares;
 
-conf_list_t *g_conf_list_first;
-conf_list_t *g_conf_list_current;
+firmware_list_t *g_fw_list_first;
+firmware_list_t *g_fw_list_current;
+
+#define DEF_FIRMWARE(_id, _name, _description, _fw_recommended, _fw_min, _fw_max) \
+  fw_l = (firmware_list_t*)malloc(sizeof(firmware_list_t)); \
+  fw_l->fw.id = _id; \
+  fw_l->fw.name = _name; \
+  fw_l->fw.description = _description; \
+  fw_l->fw.fw_min = _fw_min; \
+  fw_l->fw.fw_max = _fw_max; \
+  fw_l->fw.fw_recommended = _fw_recommended; \
+  fw_l->fw.num_global_config_vars = 0; \
+  fw_l->fw.num_channel_config_vars = 0; \
+  fw_list_add(fw_l);
 
 #define BASE_ADDR(addr) c_addr = addr;
 
@@ -22,7 +34,7 @@ conf_list_t *g_conf_list_current;
   l->v.lowbit = _low; \
   l->v.channel_shift = _shift; \
   l->v.vsigned = _signed; \
-  conf_list_add(l);
+  conf_list_add(l, &g_fw_list_current->fw);
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
   DEF_VAR(_name, conf_type_int, _global, c_addr, _offset, _low, _high, _shift, 0)
@@ -38,60 +50,119 @@ conf_list_t *g_conf_list_current;
 
 #define NEXT_REG c_addr += 4;
 
-void conf_list_add(conf_list_t *l)
+void fw_list_add(firmware_list_t *l)
 {
   l->next = NULL;
 
-  if(g_conf_list_current == NULL)
+  if(g_fw_list_current == NULL)
+    g_fw_list_first = g_fw_list_current = l;
+  else
   {
-    g_conf_list_first = g_conf_list_current = l;
+    g_fw_list_current->next = l;
+    g_fw_list_current = l;
+  }
+}
+
+void conf_list_add(conf_list_t *l, firmware_def_t *fw)
+{
+  l->next = NULL;
+
+  if(fw->conf_list_current == NULL)
+  {
+    fw->conf_list_first = fw->conf_list_current = l;
   }
   else
   {
-    g_conf_list_current->next = l;
-    g_conf_list_current = l;
+    fw->conf_list_current->next = l;
+    fw->conf_list_current = l;
   }
 
   if(l->v.global == 1)
-    g_num_global_config_vars++;
+    fw->num_global_config_vars++;
   else
-    g_num_channel_config_vars++;
+    fw->num_channel_config_vars++;
 }
 
 void register_vars()
 {
   uint32_t c_addr;
   conf_list_t *l;
+  firmware_list_t *fw_l;
 
-  g_conf_list_first = g_conf_list_current = NULL;
+  g_fw_list_first = g_fw_list_current = NULL;
 
-  g_num_global_config_vars = 0;
-  g_num_channel_config_vars = 0;
-
-  #include "param.def"
+  #include "fw/febex_1.3.def"
+  #include "fw/pulser_2.0.def"
 
 }
 
-conf_value_def_t *conf_list_first()
+conf_value_def_t *conf_list_first(firmware_def_t *fw)
 {
-  if(!g_conf_list_first)
+  if(!fw->conf_list_first)
     return NULL;
 
-  g_conf_list_current = g_conf_list_first;
+  fw->conf_list_current = fw->conf_list_first;
 
-  return &g_conf_list_first->v;
+  return &(fw->conf_list_first->v);
 }
 
-conf_value_def_t *conf_list_next()
+conf_value_def_t *conf_list_next(firmware_def_t *fw)
 {
-  if(!g_conf_list_current)
+  if(!fw->conf_list_current)
     return NULL;
 
-  g_conf_list_current = g_conf_list_current->next;
+  fw->conf_list_current = fw->conf_list_current->next;
 
-  if(!g_conf_list_current)
+  if(!fw->conf_list_current)
     return NULL;
 
-  return &g_conf_list_current->v;  
+  return &(fw->conf_list_current->v);  
+}
+
+firmware_def_t *fw_list_first()
+{
+  if(!g_fw_list_first)
+    return NULL;
+
+  g_fw_list_current = g_fw_list_first;
+
+  return &g_fw_list_first->fw;
+}
+
+firmware_def_t *fw_list_next()
+{
+  if(!g_fw_list_current)
+    return NULL;
+
+  if(!(g_fw_list_current = g_fw_list_current->next))
+    return NULL;
+
+  return &g_fw_list_current->fw;
+}
+
+firmware_def_t *get_firmware_def(uint32_t id)
+{
+  firmware_def_t *fw;
+
+  for(fw = fw_list_first(); fw != NULL; fw = fw_list_next())
+  {
+    if(fw->id == id || id == 0) // FW ID = 0 -> Pick default firmware (first one)
+      return fw;
+  }
+
+  return NULL;
+}
+
+uint32_t get_firmware_id(const char *name)
+{
+  firmware_def_t *fw;
+
+  for(fw = fw_list_first(); fw != NULL; fw = fw_list_next())
+  {
+    if(strcmp(name, fw->name) == 0 || strcmp(name, "default") == 0)
+      return fw->id;
+  }
+
+  return 0;
 }
 

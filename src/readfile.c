@@ -4,6 +4,7 @@
 #include "paramdef.h"
 
 char *g_fname;
+uint8_t g_fileversion;
 
 int readfile(char *fname)
 {
@@ -14,27 +15,90 @@ int readfile(char *fname)
   if(!(fconf = fopen(fname, "rb")))
   {
     fprintf(stderr, "Could not open file %s for reading.\n", fname);
+    g_fileversion = FILEVERSION_RECENT;
     return 0;
   }
 
   uint8_t block_size;
   uint8_t sfp;
-  uint8_t module;
+  uint8_t module, m;
   uint32_t base_addr;
+  uint32_t fw;
   uint32_t *data;
 
   if(!fread(&sfp, 1, 1, fconf))
   {
-    fprintf(stderr, "Warning: Invalid file %s.\n", fname);
+    fprintf(stderr, "Warning: Invalid/empty file %s.\n", fname);
+    return 0;
+  }
+
+  if(sfp == 0xff)
+  {
+    // New file structure -> Read file version
+    if(!fread(&g_fileversion, 1, 1, fconf))
+    {
+      fprintf(stderr, "Warning: Invalid file %s: Could not read file version.\n", fname);
+      return 0;
+    }
+
+    switch(g_fileversion)
+    {
+      case 1:
+        // Real number of SFPs
+        if(!fread(&sfp, 1, 1, fconf))
+        {
+          fprintf(stderr, "Warning: Invalid file %s: Could not read number of SFPs.\n", fname);
+          return 0;
+        }
+        break;
+
+      default:
+        fprintf(stderr, "Invalid file version for file %s: %d\n", fname, g_fileversion);
+        return 0;
+    }
+  }
+  else
+  {
+    // Old file structure
+    g_fileversion = 0;
+  }
+
+  if(sfp == 0 || sfp > 4)
+  {
+    fprintf(stderr, "Invalid number of SFPs: %d\n", sfp);
     return 0;
   }
 
   module_data_add_sfp(sfp);
 
-  for(sfp = 0; sfp < g_num_sfp; sfp++)
+  switch(g_fileversion)
   {
-    fread(&module, 1, 1, fconf);
-    module_data_add_module(sfp, module);
+  case 0:
+    for(sfp = 0; sfp < g_num_sfp; sfp++)
+    {
+      fread(&module, 1, 1, fconf);
+      module_data_add_module(sfp, module, 0);
+    }
+    break;
+
+  case 1:
+    for(sfp = 0; sfp < g_num_sfp; sfp++)
+    {
+      fread(&module, 1, 1, fconf);
+      for(m = 0; m < module; m++)
+      {
+        fread(&fw, 4, 1, fconf);
+        // Read (and ignore) further firmware definition for MBS
+        fread(&fw, 4, 1, fconf);  // FW Min
+        fread(&fw, 4, 1, fconf);  // FW Max
+        fread(&fw, 4, 1, fconf);  // FW Recommended
+        if(module_data_add_module(sfp, 1, fw) == -1)
+          fprintf(stderr, "Could not add module %d to SFP %d\n", m, sfp);
+      }
+    }
+    break;
+
+  // Invalid file version have already been checked before 
   }
 
   while(!feof(fconf))
@@ -52,6 +116,8 @@ int readfile(char *fname)
 
   fclose(fconf);
 
+  fprintf(stderr, "Read configuration from file %s. File version: %d\n", g_fname, g_fileversion);
+
   return 1;
 }
 
@@ -59,6 +125,7 @@ int write_file()
 {
   FILE *fd;
   regblock_t *block;
+  uint8_t i, j;
 
   if(!(fd = fopen(g_fname, "wb")))
   {
@@ -66,8 +133,41 @@ int write_file()
     return 0;
   }
 
-  fwrite(&g_num_sfp, 1, 1, fd);
-  fwrite(g_num_modules, 1, g_num_sfp, fd);
+  switch(g_fileversion)
+  {
+  case 0:
+    fwrite(&g_num_sfp, 1, 1, fd);
+    fwrite(g_num_modules, 1, g_num_sfp, fd);
+
+    break;
+
+  case 1:
+    // File header
+    i = 0xff;
+    fwrite(&i, 1, 1, fd);
+    fwrite(&g_fileversion, 1, 1, fd);
+
+    // Data header, firmware information
+    fwrite(&g_num_sfp, 1, 1, fd);
+    for(i = 0; i < g_num_sfp; i++)
+    {
+      fwrite(&g_num_modules[i], 1, 1, fd);
+      for(j = 0; j < g_num_modules[i]; j++)
+      {
+        fwrite(&g_arr_module_data[i][j].firmware->id, 4, 1, fd);
+        fwrite(&g_arr_module_data[i][j].firmware->fw_min, 4, 1, fd);
+        fwrite(&g_arr_module_data[i][j].firmware->fw_max, 4, 1, fd);
+        fwrite(&g_arr_module_data[i][j].firmware->fw_recommended, 4, 1, fd);
+      }
+    }
+
+    break;
+
+  default:
+    fprintf(stderr, "Invalid file version.\n");
+    return 0;
+  }
+
 
   block = regblock_list_first();
 
@@ -103,7 +203,7 @@ void fill_data_from_file()
   {
     for(mod = 0; mod < g_num_modules[sfp]; mod++)
     {
-      for(ngv = 0; ngv < g_num_global_config_vars; ngv++)
+      for(ngv = 0; ngv < g_arr_module_data[sfp][mod].firmware->num_global_config_vars; ngv++)
       {
 	v = g_arr_module_data[sfp][mod].arr_global_cfg[ngv].value_def;
 
@@ -118,7 +218,7 @@ void fill_data_from_file()
         g_arr_module_data[sfp][mod].arr_global_cfg[ngv].value_data = dat;
       }
 
-      for(ncv = 0; ncv < g_num_channel_config_vars; ncv++)
+      for(ncv = 0; ncv < g_arr_module_data[sfp][mod].firmware->num_channel_config_vars; ncv++)
       {
 	v = g_arr_module_data[sfp][mod].arr_channel_cfg[0][ncv].value_def;
 	addr = v->addr;
@@ -202,14 +302,14 @@ void fill_regdata_from_module_data()
   {
     for(mod = 0; mod < g_num_modules[sfp]; mod++)
     {
-      for(v = 0; v < g_num_global_config_vars; v++)
+      for(v = 0; v < g_arr_module_data[sfp][mod].firmware->num_global_config_vars; v++)
       {
 	setreg(sfp, mod, 0, g_arr_module_data[sfp][mod].arr_global_cfg[v].value_def,
 	    g_arr_module_data[sfp][mod].arr_global_cfg[v].value_data);
       }
       for(c = 0; c < 16; c++)
       {
-	for(v = 0; v < g_num_channel_config_vars; v++)
+	for(v = 0; v < g_arr_module_data[sfp][mod].firmware->num_channel_config_vars; v++)
 	{
 	  setreg(sfp, mod, c, g_arr_module_data[sfp][mod].arr_channel_cfg[c][v].value_def,
 	      g_arr_module_data[sfp][mod].arr_channel_cfg[c][v].value_data);

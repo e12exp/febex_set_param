@@ -15,21 +15,25 @@ void module_data_init()
   g_num_modules = NULL;
 }
 
-void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data)
+void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data, firmware_def_t *firmware)
 {
   uint8_t c = 0, ncv, ngv;
   conf_value_def_t *v;
+  firmware_def_t *fw;
 
   data->sfp = sfp;
   data->module = module;
-  data->arr_global_cfg = (conf_value_data_t*)malloc(g_num_global_config_vars * sizeof(conf_value_data_t));
+  fw = data->firmware = firmware;
+
+
+  data->arr_global_cfg = (conf_value_data_t*)malloc(fw->num_global_config_vars * sizeof(conf_value_data_t));
   
   data->arr_channel_cfg = (conf_value_data_t**)malloc(16 * sizeof(conf_value_data_t*));
 
   for(c = 0; c < 16; c++)
-    data->arr_channel_cfg[c] = (conf_value_data_t*)malloc(g_num_channel_config_vars * sizeof(conf_value_data_t));
+    data->arr_channel_cfg[c] = (conf_value_data_t*)malloc(fw->num_channel_config_vars * sizeof(conf_value_data_t));
 
-  v = conf_list_first();
+  v = conf_list_first(fw);
   ngv = 0;
   ncv = 0;
   while(v)
@@ -49,7 +53,7 @@ void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data)
       ncv++;
     }
 
-    v = conf_list_next();
+    v = conf_list_next(fw);
   }
 }
 
@@ -75,22 +79,35 @@ uint8_t module_data_add_sfp(uint8_t num)
   return g_num_sfp - 1;
 }
 
-uint8_t module_data_add_module(uint8_t sfp, uint8_t num)
+int16_t module_data_add_module(uint8_t sfp, uint8_t num, uint32_t firmware)
 {
   uint8_t m;
+  firmware_def_t *fw;
 
   module_data_t *tmp_arr_module_data = (module_data_t*)malloc(sizeof(module_data_t) * (num + g_num_modules[sfp]));
 
   if(g_arr_module_data[sfp] != NULL)
   {
     memcpy(tmp_arr_module_data, g_arr_module_data[sfp], sizeof(module_data_t) * g_num_modules[sfp]);
-    free(g_arr_module_data[sfp]);
+//    free(g_arr_module_data[sfp]);
   }
 
-  g_arr_module_data[sfp] = tmp_arr_module_data;
+//  g_arr_module_data[sfp] = tmp_arr_module_data;
   
   for(m = g_num_modules[sfp]; m < g_num_modules[sfp] + num; m++)
-    module_data_prepare(sfp, m, &g_arr_module_data[sfp][m]);
+  {
+    if(!(fw = get_firmware_def(firmware)))
+    {
+      fprintf(stderr, "Invalid firmware ID: 0x%08x (SFP %d, module %d)\n", firmware, sfp, m);
+      free(tmp_arr_module_data);
+      return -1;
+    }
+
+    module_data_prepare(sfp, m, &tmp_arr_module_data[m], fw);
+  }
+
+  free(g_arr_module_data[sfp]);
+  g_arr_module_data[sfp] = tmp_arr_module_data;
 
   g_num_modules[sfp] += num;
 
@@ -150,14 +167,14 @@ int32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name
   if(channel < 0)
   {
     d = config_array_search(g_arr_module_data[sfp][module].arr_global_cfg,
-	g_num_global_config_vars, name);
+	g_arr_module_data[sfp][module].firmware->num_global_config_vars, name);
   }
   else if(channel >= 16)
     return NULL;
   else
   {
     d = config_array_search(g_arr_module_data[sfp][module].arr_channel_cfg[channel],
-	g_num_channel_config_vars, name);
+	g_arr_module_data[sfp][module].firmware->num_channel_config_vars, name);
   }
 
   if(d == NULL)

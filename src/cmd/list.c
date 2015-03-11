@@ -14,6 +14,8 @@ IMPL(list)
 
   int32_t val_min, val_max;
 
+  firmware_def_t *fw;
+
   print_num_modules();
 
   if(sfp < 0)
@@ -51,8 +53,13 @@ IMPL(list)
 
     for(mod = mod_min; mod <= (mod_max == -1 ? g_num_modules[sfp] - 1 : mod_max); mod++)
     {
+      fw = g_arr_module_data[sfp][mod].firmware;
+
       printf("+- Module %d\n", mod);
-      for(v = 0; v < g_num_global_config_vars; v++)
+      printf("     Firmware %s (0x%08x - 0x%08x, Recommended 0x%08x)\n", fw->name, fw->fw_min, fw->fw_max,
+          fw->fw_recommended);
+
+      for(v = 0; v < fw->num_global_config_vars; v++)
       {
 	var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
 	val_min = 0;
@@ -79,9 +86,12 @@ IMPL(list)
       }
       printf("\n");
 
+      if(fw->num_channel_config_vars == 0)
+        continue;
+
       for(c = 0; c < 16; c++)
       {
-	for(v = 0; v < g_num_channel_config_vars; v++)
+	for(v = 0; v < fw->num_channel_config_vars; v++)
 	{
 	  var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
 	  val_min = 0;

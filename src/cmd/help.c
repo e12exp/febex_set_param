@@ -35,7 +35,7 @@ IMPL(help)
 
   if(command != NULL && strcmp(command, "meaningoflife") == 0)
   {
-    printf("Deep Blue says 42.\nSource: Douglas Adams\n");
+    printf("Deep Thought says 42.\nSource: Douglas Adams\n");
     return 1;
   }
 

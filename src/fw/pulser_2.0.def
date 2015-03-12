@@ -16,8 +16,14 @@ DEF_VAR_ENUM(integration_mode, 1, 0, 0x04, 0x05, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(pulse_mode, 1, 0, 0x00, 0x02, 0)
-DEF_VAR_INT(amplitude_mode, 1, 0, 0x04, 0x04, 0)
+DEF_VAR_ENUM(pulse_mode, 1, 0, 0x00, 0x02, 0)
+  ENUM_VAL(0, single)
+  ENUM_VAL(1, periodic)
+  ENUM_VAL(2, external)
+
+DEF_VAR_ENUM(amplitude_mode, 1, 0, 0x04, 0x04, 0)
+  ENUM_VAL(0, const)
+  ENUM_VAL(1, varying)
 
 NEXT_REG
 
@@ -83,8 +89,14 @@ DEF_VAR_MASK(output_channel, 1, 0, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_BOOL(output_polarity, 1, 0, 0x00, 0)
-DEF_VAR_INT(output_mode, 1, 0, 0x04, 0x05, 0)
+DEF_VAR_ENUM(output_polarity, 1, 0, 0x00, 0x00, 0)
+  ENUM_VAL(0, positive)
+  ENUM_VAL(1, negative)
+
+DEF_VAR_ENUM(output_mode, 1, 0, 0x04, 0x05, 0)
+  ENUM_VAL(0, normal)
+  ENUM_VAL(1, roundrobin)
+  ENUM_VAL(2, dactest)
 
 // Virtual registers for macros
 BASE_ADDR(0xf00000)

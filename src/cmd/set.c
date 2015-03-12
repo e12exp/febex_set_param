@@ -1,5 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
+#include "../command.h"
 #include "../data.h"
 
 uint8_t _set_get_interpret_range(char *range, int *min, int *max)
@@ -90,7 +94,9 @@ IMPL(set)
 
 //  int32_t value = atoi(str_value);
   int32_t value = strtol(str_value, NULL, 0);
-  int32_t val_min, val_max;
+  int32_t val_min;
+  int64_t val_max;
+  conf_value_def_t *vardef;
 
   int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;
   char *name;
@@ -104,7 +110,7 @@ IMPL(set)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
-	 int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max);
+	 int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
 
  	 if(conf_val == NULL)
  	 {
@@ -114,11 +120,18 @@ IMPL(set)
 
 	 if(value < val_min || value > val_max)
 	 {
-	   printf("Value out of range. Allowed: %d - %d\n", val_min, val_max);
+	   printf("Value out of range. Allowed: %d - %" PRId64 "\n", val_min, val_max);
 	   return 0;
 	 }
 
- 	 *conf_val = value;
+         if(vardef->hooks.set != NULL)
+         {
+           // If hook is defined, it will tell us whether to still set the variable or not
+           if((*vardef->hooks.set)(sfp, mod, c, name, &value) == 0)
+             *conf_val = value;
+         }
+         else
+ 	  *conf_val = value;
       }
     }
   }
@@ -131,9 +144,11 @@ IMPL(get)
   ARGS_INIT
   ARG_STR(variable)
 
-  int32_t val_min, val_max;
+  int32_t val_min;
+  int64_t val_max;
   int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;
   char *name;
+  conf_value_def_t *vardef;
 
   if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, &module_last, &channel_first, &channel_last, &name))
     return 0;
@@ -144,7 +159,7 @@ IMPL(get)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
-	int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max);
+	int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
 
 	if(conf_val == NULL)
  	 {
@@ -152,10 +167,13 @@ IMPL(get)
  	   return 0;
  	 }
 
+        if(vardef->hooks.get != NULL)
+          (*vardef->hooks.get)(sfp, mod, c, name, conf_val);
+
 	if(c == -1)
-	  printf("%d.%03d.%-40s [%d - %5d]: %d\n", sfp, mod, name, val_min, val_max, *conf_val);
+	  printf("%d.%03d.%-40s [%d - %5" PRId64 "]: %d\n", sfp, mod, name, val_min, val_max, *conf_val);
 	else
-	  printf("%d.%03d.%02d.%-37s [%d - %5d]: %d\n", sfp, mod, c, name, val_min, val_max, *conf_val);
+	  printf("%d.%03d.%02d.%-37s [%d - %5" PRId64 "]: %d\n", sfp, mod, c, name, val_min, val_max, *conf_val);
       }
     }
   }

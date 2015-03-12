@@ -8,6 +8,8 @@
 #include "consoleinterface.h"
 #include "data.h"
 
+display_level_t g_display_level;
+
 void print_num_modules()
 {
   uint8_t sfp;

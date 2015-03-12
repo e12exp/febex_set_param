@@ -4,36 +4,20 @@
 
 #include "command.h"
 
-#define IMPL(_name) int cmd_impl_ ## _name (int argc, char **argv)
-
-#define IMPLS(_name, _subcmd) int cmd_impl_ ## _name ##  _ ## _subcmd (int argc, char **argv) 
-#define ARGS_INIT int _impls_arg_n = 0;
-
-#define ARG_STR(_name) char *_name = argv[_impls_arg_n++];
-#define ARG_INT(_name) int _name = atoi(argv[_impls_arg_n++]);
-
 #define ARGS(...) { __VA_ARGS__ }
 #define ARG(_name, _def) #_name, #_def
 
 #define CMD(_name, _num_req, _req, _num_opt, _opt) {#_name, NULL, _num_req, _req, _num_opt, _opt, cmd_impl_ ## _name}
 #define CMDS(_name, _subcmd, _num_req, _req, _num_opt, _opt) {#_name, #_subcmd, _num_req, _req, _num_opt, _opt, cmd_impl_## _name ## _ ## _subcmd}
 
-typedef int (*cmd_cb_t)(int argc, char **argv);
-
-typedef struct
-{
-  char *name;
-  char *subcmd;
-  int num_args_required;
-  char *args_required[32];
-  int num_args_optional;
-  char *args_optional[32];
-
-  cmd_cb_t func;
-}
-cmd_impl_t;
-
 #include "commands.def"
+
+int g_num_commands;
+
+void register_commands()
+{
+  g_num_commands = sizeof(commands) / sizeof(cmd_impl_t);
+}
 
 uint8_t check_arguments(cmd_impl_t *cmd, int *argc, char **argv)
 {
@@ -107,7 +91,7 @@ uint8_t interpret_command(char *cmd, int argc, char **argv)
   if(strcmp(cmd, "lasagne") == 0)
     return print_lasagne();
 
-  for(i = 0; i < sizeof(commands) / sizeof(cmd_impl_t); i++)
+  for(i = 0; i < g_num_commands; i++)
   {
     if(strcmp(cmd, commands[i].name) == 0)
     {

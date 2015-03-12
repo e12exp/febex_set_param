@@ -1,13 +1,14 @@
-#include "cmd/sfp.c"
-#include "cmd/module.c"
-#include "cmd/list.c"
-#include "cmd/save.c"
-#include "cmd/set.c"
+#include "cmd/sfp.h"
+#include "cmd/module.h"
+#include "cmd/list.h"
+#include "cmd/firmware.h"
+#include "cmd/save.h"
+#include "cmd/set.h"
+#include "cmd/help.h"
 
-int cmd_impl_help(int argc, char **argv);
-
-cmd_impl_t commands[] =
+cmd_impl_t commands[10] =
 {
+  CMDS(firmware, list, 0, ARGS(), 0, ARGS()),
   CMDS(add, sfp, 0, ARGS(), 1, ARGS(ARG(num, 1))),
   CMDS(add, module, 1, ARGS("sfp"), 2, ARGS(ARG(num, 1), ARG(firmware, default))),
   CMDS(rm, module, 2, ARGS("sfp", "module"), 1, ARGS(ARG(num, 1))),
@@ -19,4 +20,3 @@ cmd_impl_t commands[] =
   CMD(help, 0, ARGS(), 0, ARGS()) // 2, ARGS("command", "", "subcommand", ""))
 };
 
-#include "cmd/help.c"

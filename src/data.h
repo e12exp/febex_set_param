@@ -36,7 +36,7 @@ uint8_t module_data_remove_module(uint8_t sfp, uint8_t module, uint8_t num);
 
 void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data, firmware_def_t *firmware);
 
-int32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name, int32_t *val_min, int32_t *val_max);
+int32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name, int32_t *val_min, int64_t *val_max, conf_value_def_t **def);
 
 #endif
 

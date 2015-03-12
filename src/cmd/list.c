@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+#include "../command.h"
 #include "../data.h"
 #include "../consoleinterface.h"
 #include "../paramdef.h"
@@ -12,7 +18,7 @@ IMPL(list)
   int c, v, sfp_min, sfp_max, mod_min, mod_max;
   conf_value_data_t *var;
 
-  int32_t val_min, val_max;
+  int64_t val_min, val_max;
 
   firmware_def_t *fw;
 
@@ -62,8 +68,16 @@ IMPL(list)
       for(v = 0; v < fw->num_global_config_vars; v++)
       {
 	var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
-	val_min = 0;
+        
+        if(g_display_level > var->value_def->display_level)
+          continue;
+	
+        val_min = 0;
 	val_max = var->value_def->bitmask >> var->value_def->lowbit;
+
+        // Execute hook to get value
+        if(var->value_def->hooks.get != NULL)
+          (*var->value_def->hooks.get)(sfp, mod, -1, var->value_def->name, &var->value_data);
 
 	if(var->value_def->vsigned)
 	{
@@ -79,7 +93,7 @@ IMPL(list)
         }
         else
         {
-	    printf("%d.%03d.%-40s (0x%06x) [%d - %5d]: %d\n", sfp, mod,
+	    printf("%d.%03d.%-40s (0x%06x) [%" PRId64 " - %5" PRId64 "]: %d\n", sfp, mod,
 	       var->value_def->name, var->value_def->addr,
 	       val_min, val_max, var->value_data);
         }
@@ -94,8 +108,16 @@ IMPL(list)
 	for(v = 0; v < fw->num_channel_config_vars; v++)
 	{
 	  var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
+
+          if(g_display_level > var->value_def->display_level)
+            continue;
+
 	  val_min = 0;
 	  val_max = var->value_def->bitmask >> var->value_def->lowbit;
+
+          // Execute hook to get value
+          if(var->value_def->hooks.get != NULL)
+            (*var->value_def->hooks.get)(sfp, mod, c, var->value_def->name, &var->value_data);
 
 	  if(var->value_def->vsigned)
 	  {
@@ -111,7 +133,7 @@ IMPL(list)
           }
           else
           {
-	    printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5d]: %d\n", sfp, mod, c,
+	    printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5" PRId64 "]: %d\n", sfp, mod, c,
 	      var->value_def->name, var->value_def->addr,
 	      val_max, var->value_data);
           }

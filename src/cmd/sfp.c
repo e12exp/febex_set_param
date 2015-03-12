@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "../command.h"
 #include "../data.h"
 #include "../consoleinterface.h"
 

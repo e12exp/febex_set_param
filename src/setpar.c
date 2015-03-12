@@ -23,6 +23,8 @@ int main(int argc, char **argv)
 
   module_data_init();
   register_vars();
+  register_commands();
+  g_display_level = user;
   
   if(readfile(argv[1]))
   {

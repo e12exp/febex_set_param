@@ -1,0 +1,3 @@
+DECL(set);
+DECL(get);
+

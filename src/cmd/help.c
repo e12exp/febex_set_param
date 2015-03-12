@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "../command.h"
+
 void print_help_cmd(cmd_impl_t *cmd)
 {
   int i;
@@ -10,7 +16,7 @@ void print_help_cmd(cmd_impl_t *cmd)
     printf("<%s> ", cmd->args_required[i]);
 
   for(i = 0; i < cmd->num_args_optional; i++)
-    printf("[%s] ", cmd->args_optional[2*i]);
+    printf("[%s = %s] ", cmd->args_optional[2*i], cmd->args_optional[2*i + 1]);
 
   printf("\n");
 }
@@ -38,11 +44,9 @@ IMPL(help)
   else
     printf("Usage: ");
 
-  int i, num_cmd;
+  int i;
 
-  num_cmd = sizeof(commands) / sizeof(cmd_impl_t);
-
-  for(i = 0; i < num_cmd; i++)
+  for(i = 0; i < g_num_commands; i++)
   {
     if(command == 0 || strcmp(command, commands[i].name) == 0)
     {

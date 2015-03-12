@@ -23,7 +23,7 @@ firmware_list_t *g_fw_list_current;
 #define BASE_ADDR(addr) c_addr = addr;
 
 #define DEF_VAR(_name, _type, _global, _addr, _offset, _low, _high, _shift, _signed) \
-  l = (conf_list_t*)malloc(sizeof(conf_list_t)); \
+  l = (conf_list_t*)calloc(1, sizeof(conf_list_t)); \
   l->v.name = #_name; \
   l->v.type = _type; \
   l->v.global = _global; \
@@ -34,6 +34,7 @@ firmware_list_t *g_fw_list_current;
   l->v.lowbit = _low; \
   l->v.channel_shift = _shift; \
   l->v.vsigned = _signed; \
+  l->v.display_level = beginner; \
   conf_list_add(l, &g_fw_list_current->fw);
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
@@ -47,6 +48,12 @@ firmware_list_t *g_fw_list_current;
 
 #define DEF_VAR_MASK(_name, _global, _offset, _low, _high, _shift) \
    DEF_VAR(_name, conf_type_mask, _global, c_addr, _offset, _low, _high, _shift, 0)
+
+#define DISPLAY_HIDDEN l->v.display_level = hidden;
+#define DISPLAY_EXPERT l->v.display_level = expert;
+
+#define HOOK_SET(_callback) l->v.hooks.set = _callback;
+#define HOOK_GET(_callback) l->v.hooks.get = _callback;
 
 #define NEXT_REG c_addr += 4;
 
@@ -90,6 +97,7 @@ void register_vars()
   firmware_list_t *fw_l;
 
   g_fw_list_first = g_fw_list_current = NULL;
+
 
   #include "fw/febex_1.3.def"
   #include "fw/pulser_2.0.def"

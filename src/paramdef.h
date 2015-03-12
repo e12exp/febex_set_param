@@ -11,6 +11,24 @@ typedef enum
 }
 conf_type_t;
 
+typedef enum
+{
+  hidden = 0,
+  expert = 1,
+  user = 6,
+  beginner = 10
+}
+display_level_t;
+
+typedef int (*variable_callback_t)(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
+
+typedef struct
+{
+  variable_callback_t set;
+  variable_callback_t get;
+}
+variable_hooks_t;
+
 typedef struct
 {
   char *name;
@@ -26,6 +44,10 @@ typedef struct
   uint32_t channel_shift;
 
   uint8_t vsigned;
+
+  display_level_t display_level;
+
+  variable_hooks_t hooks;
 }
 conf_value_def_t;
 

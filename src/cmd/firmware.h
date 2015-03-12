@@ -1,0 +1,2 @@
+DECLS(firmware, list);
+

@@ -1,0 +1,2 @@
+DECLS(add, sfp);
+

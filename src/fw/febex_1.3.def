@@ -1,4 +1,4 @@
-DEF_FIRMWARE(0x01030173, "febex_1.3", "FEBEX 1.3 with Multi Event Readout", 0x01030173, 0x01030172, 0x0103ffff)
+DEF_FIRMWARE(0x01030173, "febex_1.3", "FEBEX 1.3 with Multi Event Readout", 16, 0x01030173, 0x01030172, 0x0103ffff)
 
 BASE_ADDR(0x300100)
 
@@ -36,19 +36,19 @@ DEF_VAR_INT(qpid_t3, 1, 0, 0x0, 0x9, 0)
 DEF_VAR_INT(qpid_t4, 1, 0, 0x10, 0x19, 0)
 NEXT_REG
 
-DEF_VAR(qpid_b_over_d, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
+DEF_VAR(qpid_b_over_d, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0) DISPLAY_HIDDEN
 DEF_VAR_INT(qpid_nf_shift_right, 1, 0, 0x18, 0x1b, 0)
 NEXT_REG
 
-DEF_VAR(qpid_c_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
+DEF_VAR(qpid_c_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0) DISPLAY_HIDDEN
 DEF_VAR_INT(qpid_ns_shift_right, 1, 0, 0x18, 0x1b, 0)
 NEXT_REG
 
-DEF_VAR(qpid_inv_a_minus_bc_over_d, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
+DEF_VAR(qpid_inv_a_minus_bc_over_d, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0) DISPLAY_HIDDEN
 DEF_VAR_INT(qpid_peaktime, 1, 0, 0x18, 0x1b, 0)
 NEXT_REG
 
-DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
+DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0) DISPLAY_HIDDEN
 DEF_VAR_INT(num_events_readout, 1, 0, 0x18, 0x1f, 0)
 NEXT_REG
 
@@ -79,7 +79,13 @@ DEF_VAR_BOOL(trigger_feedback_busy, 0, 4, 5, 0)
 DEF_VAR_BOOL(trigger_enable_validation, 0, 4, 6, 0)
 DEF_VAR_BOOL(trigger_enable_walk_correction, 0, 4, 7, 0)
 
-DEF_VAR_INT(tracemode, 0, 4, 8, 0xf, 0)
+DEF_VAR_ENUM(tracemode, 0, 4, 8, 0xf, 0)
+  ENUM_VAL(0, raw)
+  ENUM_VAL(1, discriminator)
+  ENUM_VAL(2, mau)
+  ENUM_VAL(3, baseline)
+  ENUM_VAL(4, mwd)
+  ENUM_VAL(7, raw_50mhz)
 
 DEF_VAR_INT(cfd_hysteresis_threshold, 0, 4, 0x10, 0x1b, 0)
 

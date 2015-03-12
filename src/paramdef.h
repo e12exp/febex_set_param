@@ -82,6 +82,8 @@ typedef struct
   uint32_t fw_max;
   uint32_t fw_recommended;
 
+  uint8_t num_channels;
+
   uint16_t num_global_config_vars;
   uint16_t num_channel_config_vars;
 

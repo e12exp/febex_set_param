@@ -8,7 +8,7 @@ uint16_t g_num_firmwares;
 firmware_list_t *g_fw_list_first;
 firmware_list_t *g_fw_list_current;
 
-#define DEF_FIRMWARE(_id, _name, _description, _fw_recommended, _fw_min, _fw_max) \
+#define DEF_FIRMWARE(_id, _name, _description, _channels, _fw_recommended, _fw_min, _fw_max) \
   fw_l = (firmware_list_t*)malloc(sizeof(firmware_list_t)); \
   fw_l->fw.id = _id; \
   fw_l->fw.name = _name; \
@@ -16,6 +16,7 @@ firmware_list_t *g_fw_list_current;
   fw_l->fw.fw_min = _fw_min; \
   fw_l->fw.fw_max = _fw_max; \
   fw_l->fw.fw_recommended = _fw_recommended; \
+  fw_l->fw.num_channels = _channels; \
   fw_l->fw.num_global_config_vars = 0; \
   fw_l->fw.num_channel_config_vars = 0; \
   fw_list_add(fw_l);

@@ -1,6 +1,6 @@
 #include "hooks/pulser_2.0.h"
 
-DEF_FIRMWARE(0x02000027, "pulser_2.0", "CALIFA Pulser with GOSIP readout", 0x02000027, 0x02000027, 0x0200ffff)
+DEF_FIRMWARE(0x02000027, "pulser_2.0", "CALIFA Pulser with GOSIP readout", 0, 0x02000027, 0x02000027, 0x0200ffff)
 
 BASE_ADDR(0x300104)
 

@@ -28,9 +28,9 @@ void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data, firmw
 
   data->arr_global_cfg = (conf_value_data_t*)malloc(fw->num_global_config_vars * sizeof(conf_value_data_t));
   
-  data->arr_channel_cfg = (conf_value_data_t**)malloc(16 * sizeof(conf_value_data_t*));
+  data->arr_channel_cfg = (conf_value_data_t**)malloc(firmware->num_channels * sizeof(conf_value_data_t*));
 
-  for(c = 0; c < 16; c++)
+  for(c = 0; c < firmware->num_channels; c++)
     data->arr_channel_cfg[c] = (conf_value_data_t*)malloc(fw->num_channel_config_vars * sizeof(conf_value_data_t));
 
   v = conf_list_first(fw);

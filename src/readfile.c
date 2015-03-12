@@ -224,7 +224,7 @@ void fill_data_from_file()
 	addr = v->addr;
 	mask = v->bitmask;
 	lowbit = v->lowbit;
-	for(c = 0; c < 16; c++)
+	for(c = 0; c < g_arr_module_data[sfp][mod].firmware->num_channels; c++)
 	{
 	  search_register_data(sfp, mod, addr, &dat),
 	  dat = (dat & mask) >> lowbit;

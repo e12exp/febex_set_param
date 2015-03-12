@@ -15,7 +15,7 @@ IMPL(list)
   ARG_INT(sfp)
   ARG_INT(mod)
 
-  int c, v, sfp_min, sfp_max, mod_min, mod_max;
+  int c, v, sfp_min, sfp_max, mod_min, mod_max, n_var;
   conf_value_data_t *var;
 
   int64_t val_min, val_max;
@@ -65,90 +65,63 @@ IMPL(list)
       printf("     Firmware %s (0x%08x - 0x%08x, Recommended 0x%08x)\n", fw->name, fw->fw_min, fw->fw_max,
           fw->fw_recommended);
 
-      for(v = 0; v < fw->num_global_config_vars; v++)
+      for(c = -1; c < fw->num_channels; c++)
       {
-	var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
-        
-        if(g_display_level > var->value_def->display_level)
-          continue;
-	
-        val_min = 0;
-	val_max = var->value_def->bitmask >> var->value_def->lowbit;
-
-        // Execute hook to get value
-        if(var->value_def->hooks.get != NULL)
-          (*var->value_def->hooks.get)(sfp, mod, -1, var->value_def->name, &var->value_data);
-
-	if(var->value_def->vsigned)
-	{
-		val_min = -(val_max/2 + 1);
-		val_max /= 2;
-	}
-
-        if(var->value_def->type == conf_type_mask)
-        {
-            printf("%d.%03d.%-40s (0x%06x): 0b", sfp, mod, var->value_def->name,
-                  var->value_def->addr);
-            print_binary_val(var->value_data, val_max);
-        }
-        else if(var->value_def->type == conf_type_enum)
-        {
-            printf("%d.%03d.%-40s (0x%06x) [", sfp, mod, var->value_def->name, var->value_def->addr);
-            for(var->value_def->enum_value_current = var->value_def->enum_value_list; var->value_def->enum_value_current != NULL; var->value_def->enum_value_current = var->value_def->enum_value_current->next)
-            {
-              printf("%s%s", var->value_def->enum_value_current->display,
-                  var->value_def->enum_value_current->next != NULL ? ", " : "");
-            }
-            printf("]: %s (%d)\n", enum_get_value_display(var->value_def, var->value_data), var->value_data);
-        }
+        if(c == -1)
+          n_var = fw->num_global_config_vars;
         else
+          n_var = fw->num_channel_config_vars;
+
+        for(v = 0; v < n_var; v++)
         {
-	    printf("%d.%03d.%-40s (0x%06x) [%" PRId64 " - %5" PRId64 "]: %d\n", sfp, mod,
-	       var->value_def->name, var->value_def->addr,
-	       val_min, val_max, var->value_data);
-        }
-      }
-      printf("\n");
-
-      if(fw->num_channel_config_vars == 0)
-        continue;
-
-      for(c = 0; c < 16; c++)
-      {
-	for(v = 0; v < fw->num_channel_config_vars; v++)
-	{
-	  var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
-
+          if(c == -1)
+            var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
+          else
+            var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
+          
           if(g_display_level > var->value_def->display_level)
             continue;
-
-	  val_min = 0;
-	  val_max = var->value_def->bitmask >> var->value_def->lowbit;
+          
+          val_min = 0;
+          val_max = var->value_def->bitmask >> var->value_def->lowbit;
 
           // Execute hook to get value
           if(var->value_def->hooks.get != NULL)
-            (*var->value_def->hooks.get)(sfp, mod, c, var->value_def->name, &var->value_data);
+            (*var->value_def->hooks.get)(sfp, mod, -1, var->value_def->name, &var->value_data);
 
-	  if(var->value_def->vsigned)
-	  {
-		val_min = -(val_max/2 + 1);
-		val_max /= 2;
-	  }
+          if(var->value_def->vsigned)
+          {
+          	val_min = -(val_max/2 + 1);
+          	val_max /= 2;
+          }
+
+          if(c == -1)
+            printf("%d.%03d.%-40s (0x%06x)", sfp, mod, var->value_def->name, var->value_def->addr);
+          else
+            printf("%d.%03d.%02d.%-37s (0x%06x)", sfp, mod, c, var->value_def->name, var->value_def->addr);
 
           if(var->value_def->type == conf_type_mask)
           {
-              printf("%d.%03d.%02d.%-37s (0x%06x): 0b", sfp, mod, c, var->value_def->name,
-                    var->value_def->addr);
+              printf(": 0b");
               print_binary_val(var->value_data, val_max);
+          }
+          else if(var->value_def->type == conf_type_enum)
+          {
+              printf(" [");
+              for(var->value_def->enum_value_current = var->value_def->enum_value_list; var->value_def->enum_value_current != NULL; var->value_def->enum_value_current = var->value_def->enum_value_current->next)
+              {
+                printf("%s%s", var->value_def->enum_value_current->display,
+                    var->value_def->enum_value_current->next != NULL ? ", " : "");
+              }
+              printf("]: %s (%d)\n", enum_get_value_display(var->value_def, var->value_data), var->value_data);
           }
           else
           {
-	    printf("%d.%03d.%02d.%-37s (0x%06x) [0 - %5" PRId64 "]: %d\n", sfp, mod, c,
-	      var->value_def->name, var->value_def->addr,
-	      val_max, var->value_data);
+              printf(" [%" PRId64 " - %5" PRId64 "]: %d\n", 
+                 val_min, val_max, var->value_data);
           }
-	}
-	printf("\n");
+        }
+        printf("\n");
       }
     }
   }

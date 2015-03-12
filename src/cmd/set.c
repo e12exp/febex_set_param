@@ -111,6 +111,9 @@ IMPL(set)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
+         if(c >= g_arr_module_data[sfp][mod].firmware->num_channels)
+           continue;
+
 	 int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
 
  	 if(conf_val == NULL)

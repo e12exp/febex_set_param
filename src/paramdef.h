@@ -7,7 +7,8 @@ typedef enum
 {
   conf_type_int = 1,
   conf_type_macro_qpid = 2,
-  conf_type_mask = 3
+  conf_type_mask = 3,
+  conf_type_enum = 4
 }
 conf_type_t;
 
@@ -29,6 +30,15 @@ typedef struct
 }
 variable_hooks_t;
 
+typedef struct s_enum_val
+{
+  int32_t value;
+  const char *display;
+
+  struct s_enum_val *next;
+}
+enum_val_t;
+
 typedef struct
 {
   char *name;
@@ -44,6 +54,9 @@ typedef struct
   uint32_t channel_shift;
 
   uint8_t vsigned;
+
+  enum_val_t *enum_value_list;
+  enum_val_t *enum_value_current;
 
   display_level_t display_level;
 
@@ -99,6 +112,9 @@ firmware_def_t *fw_list_next();
 
 firmware_def_t *get_firmware_def(uint32_t id);
 uint32_t get_firmware_id(const char *name);
+
+const char *enum_get_value_display(conf_value_def_t *vardef, int32_t val);
+int enum_get_value(conf_value_def_t *vardef, const char *str, int32_t *val);
 
 void register_vars();
 

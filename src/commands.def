@@ -5,8 +5,9 @@
 #include "cmd/save.h"
 #include "cmd/set.h"
 #include "cmd/help.h"
+#include "cmd/display.h"
 
-cmd_impl_t commands[10] =
+cmd_impl_t commands[] =
 {
   CMDS(firmware, list, 0, ARGS(), 0, ARGS()),
   CMDS(add, sfp, 0, ARGS(), 1, ARGS(ARG(num, 1))),
@@ -17,6 +18,7 @@ cmd_impl_t commands[10] =
   CMD(save, 0, ARGS(), 0, ARGS()),
   CMD(set, 2, ARGS("variable", "value"), 0, ARGS()),
   CMD(get, 1, ARGS("variable"), 0, ARGS()),
+  CMD(display, 0, ARGS(), 1, ARGS(ARG(level, ))),
   CMD(help, 0, ARGS(), 0, ARGS()) // 2, ARGS("command", "", "subcommand", ""))
 };
 

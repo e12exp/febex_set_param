@@ -49,6 +49,11 @@ firmware_list_t *g_fw_list_current;
 #define DEF_VAR_MASK(_name, _global, _offset, _low, _high, _shift) \
    DEF_VAR(_name, conf_type_mask, _global, c_addr, _offset, _low, _high, _shift, 0)
 
+#define DEF_VAR_ENUM(_name, _global, _offset, _low, _high, _shift) \
+  DEF_VAR(_name, conf_type_enum, _global, c_addr, _offset, _low, _high, _shift, 0)
+
+#define ENUM_VAL(_val, _display) enum_value_list_add(_val, #_display, &l->v);
+
 #define DISPLAY_HIDDEN l->v.display_level = hidden;
 #define DISPLAY_EXPERT l->v.display_level = expert;
 
@@ -88,6 +93,17 @@ void conf_list_add(conf_list_t *l, firmware_def_t *fw)
     fw->num_global_config_vars++;
   else
     fw->num_channel_config_vars++;
+}
+
+void enum_value_list_add(uint32_t value, const char *display, conf_value_def_t *vardef)
+{
+  if(vardef->enum_value_list == NULL)
+    vardef->enum_value_list = vardef->enum_value_current = (enum_val_t*)calloc(1, sizeof(enum_val_t));
+  else
+    vardef->enum_value_current = vardef->enum_value_current->next = (enum_val_t*)calloc(1, sizeof(enum_val_t));
+
+  vardef->enum_value_current->value = value;
+  vardef->enum_value_current->display = display;
 }
 
 void register_vars()
@@ -169,6 +185,31 @@ uint32_t get_firmware_id(const char *name)
   {
     if(strcmp(name, fw->name) == 0 || strcmp(name, "default") == 0)
       return fw->id;
+  }
+
+  return 0;
+}
+
+const char *enum_get_value_display(conf_value_def_t *vardef, int32_t val)
+{
+  for(vardef->enum_value_current = vardef->enum_value_list; vardef->enum_value_current != NULL; vardef->enum_value_current = vardef->enum_value_current->next)
+  {
+    if(vardef->enum_value_current->value == val)
+      return vardef->enum_value_current->display;
+  }
+
+  return "-invalid-";
+}
+
+int enum_get_value(conf_value_def_t *vardef, const char *str, int32_t *val)
+{
+  for(vardef->enum_value_current = vardef->enum_value_list; vardef->enum_value_current != NULL; vardef->enum_value_current = vardef->enum_value_current->next)
+  {
+    if(strcmp(str, vardef->enum_value_current->display) == 0)
+    {
+      *val = vardef->enum_value_current->value;
+      return 1;
+    }
   }
 
   return 0;

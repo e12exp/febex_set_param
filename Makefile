@@ -6,7 +6,7 @@ GCC_FLAGS=-g -Wall
 TARGET_BIN=setpar
 
 OBJ_BIN=o/setpar.o o/filestruct.o o/readfile.o o/paramdef.o o/data.o o/consoleinterface.o o/command.o o/binaryval.o \
-	o/cmd/firmware.o  o/cmd/help.o  o/cmd/list.o  o/cmd/module.o  o/cmd/save.o  o/cmd/set.o o/cmd/sfp.o \
+	o/cmd/firmware.o  o/cmd/help.o  o/cmd/list.o  o/cmd/module.o  o/cmd/save.o  o/cmd/set.o o/cmd/sfp.o o/cmd/display.o \
 	o/fw/hooks/pulser_2.0.o
 
 .PHONY: all clean

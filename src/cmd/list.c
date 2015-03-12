@@ -91,6 +91,16 @@ IMPL(list)
                   var->value_def->addr);
             print_binary_val(var->value_data, val_max);
         }
+        else if(var->value_def->type == conf_type_enum)
+        {
+            printf("%d.%03d.%-40s (0x%06x) [", sfp, mod, var->value_def->name, var->value_def->addr);
+            for(var->value_def->enum_value_current = var->value_def->enum_value_list; var->value_def->enum_value_current != NULL; var->value_def->enum_value_current = var->value_def->enum_value_current->next)
+            {
+              printf("%s%s", var->value_def->enum_value_current->display,
+                  var->value_def->enum_value_current->next != NULL ? ", " : "");
+            }
+            printf("]: %s (%d)\n", enum_get_value_display(var->value_def, var->value_data), var->value_data);
+        }
         else
         {
 	    printf("%d.%03d.%-40s (0x%06x) [%" PRId64 " - %5" PRId64 "]: %d\n", sfp, mod,

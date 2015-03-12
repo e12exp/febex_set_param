@@ -93,7 +93,8 @@ IMPL(set)
   ARG_STR(str_value)
 
 //  int32_t value = atoi(str_value);
-  int32_t value = strtol(str_value, NULL, 0);
+  char *valend;
+  int32_t value = strtol(str_value, &valend, 0);
   int32_t val_min;
   int64_t val_max;
   conf_value_def_t *vardef;
@@ -117,6 +118,21 @@ IMPL(set)
  	   printf("Invalid configuration variable.\n");
  	   return 0;
  	 }
+
+         if(vardef->type == conf_type_enum && valend == str_value)
+         {
+           // Enumeration value given as string
+           if(!enum_get_value(vardef, str_value, &value))
+           {
+             printf("Invalid enumeration key for %s: %s\n", vardef->name, str_value);
+             return 0;
+           }
+         }
+         else if(*valend != '\0')
+         {
+           printf("Invalid value (not integer) for %s: %s\n", vardef->name, str_value);
+           return 0;
+         }
 
 	 if(value < val_min || value > val_max)
 	 {
@@ -170,10 +186,15 @@ IMPL(get)
         if(vardef->hooks.get != NULL)
           (*vardef->hooks.get)(sfp, mod, c, name, conf_val);
 
-	if(c == -1)
-	  printf("%d.%03d.%-40s [%d - %5" PRId64 "]: %d\n", sfp, mod, name, val_min, val_max, *conf_val);
-	else
-	  printf("%d.%03d.%02d.%-37s [%d - %5" PRId64 "]: %d\n", sfp, mod, c, name, val_min, val_max, *conf_val);
+        if(c == -1)
+          printf("%d.%03d.%-40s", sfp, mod, name);
+        else
+          printf("%d.%03d.%02d.%-37s", sfp, mod, c, name);
+
+        if(vardef->type == conf_type_enum)
+          printf(": %s (%d)\n", enum_get_value_display(vardef, *conf_val), *conf_val);
+        else
+          printf(" [%d - %5" PRId64 "]: %d\n", val_min, val_max, *conf_val);
       }
     }
   }

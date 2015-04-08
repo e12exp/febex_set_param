@@ -87,7 +87,7 @@ IMPL(list)
 
           // Execute hook to get value
           if(var->value_def->hooks.get != NULL)
-            (*var->value_def->hooks.get)(sfp, mod, -1, var->value_def->name, &var->value_data);
+            (*var->value_def->hooks.get)(sfp, mod, c, var->value_def->name, &var->value_data);
 
           if(var->value_def->vsigned)
           {

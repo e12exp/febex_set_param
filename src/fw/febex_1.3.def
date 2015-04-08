@@ -63,6 +63,7 @@ DEF_VAR_BOOL(energy_bias_correct, 1, 0, 0x1a, 0)
 NEXT_REG
 
 DEF_VAR_INT_SIGNED(fixed_bl_val, 1, 0, 0x00, 0x11, 0)
+DEF_VAR_MASK(veto_dst, 1, 0, 24, 31, 0)
 
 //BASE_ADDR(0x300138)
 //DEF_VAR_INT(select_adc, 0, 0, 0x0, 0x3, 4)

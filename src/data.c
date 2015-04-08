@@ -45,7 +45,7 @@ void module_data_prepare(uint8_t sfp, uint8_t module, module_data_t *data, firmw
     }
     else
     {
-      for(c = 0; c < 16; c++)
+      for(c = 0; c < fw->num_channels; c++)
       {
 	data->arr_channel_cfg[c][ncv].value_def = v;
 	data->arr_channel_cfg[c][ncv].value_data = 0;
@@ -169,7 +169,7 @@ int32_t *module_data_get(uint8_t sfp, uint8_t module, int8_t channel, char *name
     d = config_array_search(g_arr_module_data[sfp][module].arr_global_cfg,
 	g_arr_module_data[sfp][module].firmware->num_global_config_vars, name);
   }
-  else if(channel >= 16)
+  else if(channel >= g_arr_module_data[sfp][module].firmware->num_channels)
     return NULL;
   else
   {

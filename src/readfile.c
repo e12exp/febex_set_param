@@ -307,7 +307,7 @@ void fill_regdata_from_module_data()
 	setreg(sfp, mod, 0, g_arr_module_data[sfp][mod].arr_global_cfg[v].value_def,
 	    g_arr_module_data[sfp][mod].arr_global_cfg[v].value_data);
       }
-      for(c = 0; c < 16; c++)
+      for(c = 0; c < g_arr_module_data[sfp][mod].firmware->num_channels; c++)
       {
 	for(v = 0; v < g_arr_module_data[sfp][mod].firmware->num_channel_config_vars; v++)
 	{

@@ -87,7 +87,7 @@ IMPLS(cp, module)
       g_arr_module_data[dst_sfp][m].arr_global_cfg[v].value_data
 	= g_arr_module_data[src_sfp][src_mod].arr_global_cfg[v].value_data;
     }
-    for(c = 0; c < 16; c++)
+    for(c = 0; c < fw->num_channels; c++)
     {
       for(v = 0; v < fw->num_channel_config_vars; v++)
       {

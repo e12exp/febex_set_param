@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "paramdef.h"
 #include "filestruct.h"
@@ -7,7 +8,7 @@
 #include "data.h"
 #include "consoleinterface.h"
 #include "command.h"
-#include "string.h"
+
 int main(int argc, char **argv)
 {
   uint8_t stat;

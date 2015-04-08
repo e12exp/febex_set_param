@@ -8,7 +8,7 @@ DEF_VAR_INT(num_events_readout, 1, 0, 0x00, 0x08, 0)
 
 BASE_ADDR(0x300400)
 
-DEF_VAR_BOOL(enable_pulser, 0, 0x80, 0x00, 0)
+DEF_VAR_BOOL(enable, 0, 0x80, 0x00, 0)
 DEF_VAR_ENUM(integration_mode, 0 , 0x80, 0x04, 0x05, 0)
   ENUM_VAL(0, current)
   ENUM_VAL(1, drop)
@@ -20,6 +20,7 @@ DEF_VAR_ENUM(pulse_mode, 0, 0x80, 0x00, 0x01, 0)
   ENUM_VAL(0, single)
   ENUM_VAL(1, periodic)
   ENUM_VAL(2, external)
+  ENUM_VAL(3, common)
 
 DEF_VAR_ENUM(amplitude_mode, 0, 0x80, 0x04, 0x04, 0)
   ENUM_VAL(0, const)
@@ -107,10 +108,6 @@ DEF_VAR_INT(delay_max_1, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
 DEF_VAR_INT(delay_max_2, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
-NEXT_REG
-
-DEF_VAR_INT(delay_step, 0, 0x80, 0x00, 0x07, 0)
-
 BASE_ADDR(0x300500)
 
 DEF_VAR_MASK(output_channel, 1, 0, 0x00, 0x07, 0)
@@ -128,11 +125,10 @@ DEF_VAR_ENUM(output_mode, 1, 0, 0x04, 0x05, 0)
 
 BASE_ADDR(0x30050c)
 
-DEF_VAR_ENUM(trigger_src, 0, 0, 0x00, 0x02, 4)
+DEF_VAR_ENUM(trigger_common, 0, 0, 0x00, 0x02, 4)
   ENUM_VAL(0, freerunning)
-  ENUM_VAL(1, single)
-  ENUM_VAL(2, periodic)
-  ENUM_VAL(3, external)
+  ENUM_VAL(1, comsingle)
+  ENUM_VAL(2, comperiodic)
 
 NEXT_REG
 
@@ -189,3 +185,9 @@ NEXT_REG
 DEF_VAR_INT(delay_max, 0, 1, 0x00, 0x0f,0)
   HOOK_SET(hook_pulser_20_set_delay_max)
   HOOK_GET(hook_pulser_20_get_delay_max)
+
+
+// set delay_step below other delay options
+BASE_ADDR(0x30047c)
+
+DEF_VAR_INT(delay_step, 0, 0x80, 0x00, 0x07, 0)

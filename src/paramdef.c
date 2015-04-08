@@ -90,7 +90,7 @@ void conf_list_add(conf_list_t *l, firmware_def_t *fw)
     fw->conf_list_current = l;
   }
 
-  if(l->v.global == 1)
+  if(l->v.global)
     fw->num_global_config_vars++;
   else
     fw->num_channel_config_vars++;

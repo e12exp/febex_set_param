@@ -8,105 +8,105 @@ DEF_VAR_INT(num_events_readout, 1, 0, 0x00, 0x08, 0)
 
 BASE_ADDR(0x300400)
 
-DEF_VAR_BOOL(enable, 0, 0x80, 0x00, 0)
-DEF_VAR_ENUM(integration_mode, 0 , 0x80, 0x04, 0x05, 0)
+DEF_VAR_BOOL(enable, 0, 0x200, 0x00, 0)
+DEF_VAR_ENUM(integration_mode, 0 , 0x200, 0x04, 0x05, 0)
   ENUM_VAL(0, current)
   ENUM_VAL(1, drop)
   ENUM_VAL(2, linear)
 
 NEXT_REG
 
-DEF_VAR_ENUM(pulse_mode, 0, 0x80, 0x00, 0x01, 0)
+DEF_VAR_ENUM(pulse_mode, 0, 0x200, 0x00, 0x01, 0)
   ENUM_VAL(0, single)
   ENUM_VAL(1, periodic)
   ENUM_VAL(2, external)
   ENUM_VAL(3, common)
 
-DEF_VAR_ENUM(amplitude_mode, 0, 0x80, 0x04, 0x04, 0)
+DEF_VAR_ENUM(amplitude_mode, 0, 0x200, 0x04, 0x04, 0)
   ENUM_VAL(0, const)
   ENUM_VAL(1, varying)
 
 NEXT_REG
 
-DEF_VAR_INT(nf, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(nf, 0, 0x200, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(ns, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(ns, 0, 0x200, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(e_const,0 , 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(e_const,0 , 0x200, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(e_min, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(e_min, 0, 0x200, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(e_max, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(e_max, 0, 0x200, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(e_step, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(e_step, 0, 0x200, 0x00, 0x07, 0)
 
 NEXT_REG
 
-DEF_VAR_INT(duty_0, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(duty_0, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(duty_1, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(duty_1, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(duty_2, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(duty_2, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(duty_3, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(duty_3, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
 BASE_ADDR(0x300440)
 
-DEF_VAR_INT(decay_const_1_l, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(decay_const_1_l, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(decay_const_1_h, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
-
-NEXT_REG
-
-DEF_VAR_INT(decay_const_2_l, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
-NEXT_REG
-DEF_VAR_INT(decay_const_2_h, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(decay_const_1_h, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
 NEXT_REG
 
-DEF_VAR_INT(shift_q, 0, 0x80, 0x00, 0x03, 0)
+DEF_VAR_INT(decay_const_2_l, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
+NEXT_REG
+DEF_VAR_INT(decay_const_2_h, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
 NEXT_REG
 
-DEF_VAR_INT(trigger_length, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(shift_q, 0, 0x200, 0x00, 0x03, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(trigger_length, 0, 0x200, 0x00, 0x07, 0)
 
 BASE_ADDR(0x300460)
 
-DEF_VAR_ENUM(trigger_delay, 0, 0x80, 0x00, 0x00, 0)
+DEF_VAR_ENUM(trigger_delay, 0, 0x200, 0x00, 0x00, 0)
   ENUM_VAL(0, disable)
   ENUM_VAL(1, enable)
 
-DEF_VAR_ENUM(delay_mode, 0, 0x80, 0x04, 0x04, 0)
+DEF_VAR_ENUM(delay_mode, 0, 0x200, 0x04, 0x04, 0)
   ENUM_VAL(0, constant)
   ENUM_VAL(1, varying)
 
 NEXT_REG
 
-DEF_VAR_INT(delay_const_1, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(delay_const_1, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(delay_const_2, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(delay_const_2, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
 NEXT_REG
 
-DEF_VAR_INT(delay_min_1, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(delay_min_1, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(delay_min_2, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(delay_min_2, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
 NEXT_REG
 
-DEF_VAR_INT(delay_max_1, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(delay_max_1, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 NEXT_REG
-DEF_VAR_INT(delay_max_2, 0, 0x80, 0x00, 0x07, 0) DISPLAY_HIDDEN
+DEF_VAR_INT(delay_max_2, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
 
 BASE_ADDR(0x300500)
 
@@ -186,8 +186,7 @@ DEF_VAR_INT(delay_max, 0, 1, 0x00, 0x0f,0)
   HOOK_SET(hook_pulser_20_set_delay_max)
   HOOK_GET(hook_pulser_20_get_delay_max)
 
-
-// set delay_step below other delay options
+// put delay step below other delay options
 BASE_ADDR(0x30047c)
 
-DEF_VAR_INT(delay_step, 0, 0x80, 0x00, 0x07, 0)
+DEF_VAR_INT(delay_step, 0, 0x200, 0x00, 0x07, 0)

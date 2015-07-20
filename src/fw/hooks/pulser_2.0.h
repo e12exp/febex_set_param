@@ -21,4 +21,7 @@ int hook_pulser_20_get_delay_min(uint8_t sfp, uint8_t module, int8_t channel, co
 int hook_pulser_20_set_delay_max(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
 int hook_pulser_20_get_delay_max(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
 
+int hook_pulser_20_set_square_height(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
+int hook_pulser_20_get_square_height(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
+
 #endif

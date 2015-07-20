@@ -127,3 +127,19 @@ int hook_pulser_20_get_delay_max(uint8_t sfp, uint8_t module, int8_t channel, co
 
   return 1;
 }
+
+int hook_pulser_20_set_square_height(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val)
+{
+  *(module_data_get(sfp, module, channel, "square_low", NULL, NULL, NULL)) = *val & 0xff;
+  *(module_data_get(sfp, module, channel, "square_high", NULL, NULL, NULL)) = (*val >> 8) & 0xff;
+
+  return 1;
+}
+
+int hook_pulser_20_get_square_height(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val)
+{
+  *val = *module_data_get(sfp, module, channel, "square_low", NULL, NULL, NULL);
+  *val |= *module_data_get(sfp, module, channel, "square_high", NULL, NULL, NULL) << 8;
+
+  return 1;
+}

@@ -190,3 +190,23 @@ DEF_VAR_INT(delay_max, 0, 1, 0x00, 0x0f,0)
 BASE_ADDR(0x30047c)
 
 DEF_VAR_INT(delay_step, 0, 0x200, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_BOOL(enable_square, 0, 0x200, 0x00, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(square_width, 0, 0x200, 0x00, 0x07, 0)
+
+NEXT_REG
+
+DEF_VAR_INT(square_low, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
+NEXT_REG
+DEF_VAR_INT(square_high, 0, 0x200, 0x00, 0x07, 0) DISPLAY_HIDDEN
+
+BASE_ADDR(0xf0001c)
+
+DEF_VAR_INT(square_height, 0, 1, 0x00, 0x0f,0)
+  HOOK_SET(hook_pulser_20_set_square_height)
+  HOOK_GET(hook_pulser_20_get_square_height)

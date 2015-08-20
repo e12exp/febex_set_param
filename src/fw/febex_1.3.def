@@ -1,4 +1,4 @@
-DEF_FIRMWARE(0x01030173, "febex_1.3", "FEBEX 1.3 with Multi Event Readout", 16, 0x01030173, 0x01030172, 0x0103ffff)
+DEF_FIRMWARE(0x01030173, "febex_1.3", "FEBEX 1.3 with Multi Event Readout", 16, 0x01030176, 0x01030172, 0x0103ffff)
 
 BASE_ADDR(0x300100)
 

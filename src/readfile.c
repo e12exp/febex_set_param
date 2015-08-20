@@ -89,9 +89,9 @@ int readfile(char *fname)
       {
         fread(&fw, 4, 1, fconf);
         // Read (and ignore) further firmware definition for MBS
-        fread(&fw, 4, 1, fconf);  // FW Min
-        fread(&fw, 4, 1, fconf);  // FW Max
-        fread(&fw, 4, 1, fconf);  // FW Recommended
+        fread(&base_addr, 4, 1, fconf);  // FW Min
+        fread(&base_addr, 4, 1, fconf);  // FW Max
+        fread(&base_addr, 4, 1, fconf);  // FW Recommended
         if(module_data_add_module(sfp, 1, fw) == -1)
           fprintf(stderr, "Could not add module %d to SFP %d\n", m, sfp);
       }

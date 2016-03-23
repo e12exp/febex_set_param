@@ -99,6 +99,6 @@ IMPLS(cp, module)
 
   print_num_modules();
 
-  return 0;
+  return 1;
 }
 

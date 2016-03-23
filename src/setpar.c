@@ -34,21 +34,22 @@ int main(int argc, char **argv)
   else
     printf("Creating new database.\n");
 
-  if (argc!=2)
+  
+  if (argc > 2) // batch mode
     {
       //interpret command returns 1 on success, 2 on error
       //and 0 on quit
-      int res=interpret_command(argv[2], argc-3, &(argv[3]))!=1;
-      if (!res 
+      int res=interpret_command(argv[2], argc-3, &(argv[3]));
+      if (res == 1
 	  && strcmp("get", argv[2]) 
 	  && strcmp("list", argv[2])
 	  && strcmp("help", argv[2])
 	  )
 	{
 	  fill_regdata_from_module_data();
-	  res+=write_file()!=1;
+	  res=write_file();
 	}
-      return res;
+      return res != 1;
     }
 
   print_num_modules();
@@ -63,6 +64,8 @@ int main(int argc, char **argv)
       continue;
     }
     stat = interpret_command(cmd, cmd_argc, cmd_argv);
+    if (stat==2)
+      fprintf(stderr, "Command failed!\n");
     free_command(cmd, cmd_argc, cmd_argv);
   }
   while(stat);

@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   module_data_init();
   register_vars();
   register_commands();
-  g_display_level = user;
+  g_display_level = beginner;
   
   if(readfile(argv[1]))
   {

@@ -12,10 +12,30 @@ IMPL(display)
 
   if(strlen(level) == 0)
   {
-    printf("Available display levels:\n"
+    char *strlevel;
+    switch(g_display_level)
+    {
+	case beginner:
+		strlevel = "beginner";
+		break;
+	case user:
+		strlevel = "user";
+		break;
+	case expert:
+		strlevel = "expert";
+		break;
+	case hidden:
+		strlevel = "debug";
+		break;
+	default:
+		strlevel = "UNKNOWN";
+		break;
+    }
+
+    printf("Current display level: %s\nAvailable display levels:\n"
         " beginner\n"
         " user\n"
-        " expert\n");
+        " expert\n", strlevel);
     return 1;
   }
 

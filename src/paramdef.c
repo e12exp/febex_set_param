@@ -35,7 +35,7 @@ firmware_list_t *g_fw_list_current;
   l->v.lowbit = _low; \
   l->v.channel_shift = _shift; \
   l->v.vsigned = _signed; \
-  l->v.display_level = beginner; \
+  l->v.display_level = fw_default_display_level; \
   conf_list_add(l, &g_fw_list_current->fw);
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
@@ -57,6 +57,8 @@ firmware_list_t *g_fw_list_current;
 
 #define DISPLAY_HIDDEN l->v.display_level = hidden;
 #define DISPLAY_EXPERT l->v.display_level = expert;
+#define DISPLAY_USER l->v.display_level = user;
+#define DISPLAY_BEGINNER l->v.display_level = beginner;
 
 #define HOOK_SET(_callback) l->v.hooks.set = _callback;
 #define HOOK_GET(_callback) l->v.hooks.get = _callback;
@@ -115,6 +117,7 @@ void register_vars()
 
   g_fw_list_first = g_fw_list_current = NULL;
 
+  display_level_t fw_default_display_level = expert;
 
   #include "fw/febex_1.3.def"
   #include "fw/pulser_2.0.def"

@@ -2,6 +2,8 @@
 
 DEF_FIRMWARE(0x02000027, "pulser_2.0", "CALIFA Pulser with GOSIP readout", 2, 0x02000027, 0x02000027, 0x0200ffff)
 
+fw_default_display_level = user;
+
 BASE_ADDR(0x300104)
 
 DEF_VAR_INT(num_events_readout, 1, 0, 0x00, 0x08, 0)

@@ -9,16 +9,16 @@
 
 cmd_impl_t commands[] =
 {
-  CMDS(firmware, list, 0, ARGS(), 0, ARGS()),
-  CMDS(add, sfp, 0, ARGS(), 1, ARGS(ARG(num, 1))),
-  CMDS(add, module, 1, ARGS("sfp"), 2, ARGS(ARG(num, 1), ARG(firmware, default))),
-  CMDS(rm, module, 2, ARGS("sfp", "module"), 1, ARGS(ARG(num, 1))),
-  CMDS(cp, module, 3, ARGS("src-sfp", "src-module", "dst-sfp"), 1, ARGS(ARG(num, 1))),
-  CMD(list, 0, ARGS(), 2, ARGS(ARG(sfp, -1), ARG(module, -1))),
-  CMD(save, 0, ARGS(), 0, ARGS()),
-  CMD(set, 2, ARGS("variable", "value"), 0, ARGS()),
-  CMD(get, 1, ARGS("variable"), 0, ARGS()),
-  CMD(display, 0, ARGS(), 1, ARGS(ARG(level, ))),
+  CMDSH(firmware, list, 0, ARGS(), 0, ARGS()),
+  CMDSH(add, sfp, 0, ARGS(), 1, ARGS(ARG(num, 1))),
+  CMDSH(add, module, 1, ARGS("sfp"), 2, ARGS(ARG(num, 1), ARG(firmware, default))),
+  CMDSH(rm, module, 2, ARGS("sfp", "module"), 1, ARGS(ARG(num, 1))),
+  CMDSH(cp, module, 3, ARGS("src-sfp", "src-module", "dst-sfp"), 1, ARGS(ARG(num, 1))),
+  CMDH(list, 0, ARGS(), 2, ARGS(ARG(sfp, -1), ARG(module, -1))),
+  CMDH(save, 0, ARGS(), 0, ARGS()),
+  CMDH(set, 2, ARGS("variable", "value"), 0, ARGS()),
+  CMDH(get, 1, ARGS("variable"), 0, ARGS()),
+  CMDH(display, 0, ARGS(), 1, ARGS(ARG(level, ))),
   CMD(help, 0, ARGS(), 0, ARGS()) // 2, ARGS("command", "", "subcommand", ""))
 };
 

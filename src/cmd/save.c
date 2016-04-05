@@ -32,3 +32,11 @@ IMPL(save)
   return r;
 }
 
+IMPL_HELP(save)
+{
+  printf("Save the current set of configuration variables to the parameter file.\n\n"
+      "Note: If you exit the program without saving, all changes will be lost.\n");
+
+  return 1;
+}
+

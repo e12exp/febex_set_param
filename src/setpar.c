@@ -37,6 +37,9 @@ int main(int argc, char **argv)
   
   if (argc > 2) // batch mode
     {
+      // I (MW) think, in batch mode, the "expert" display level should be fine
+      g_display_level = expert;
+
       //interpret command returns 1 on success, 2 on error
       //and 0 on quit
       int res=interpret_command(argv[2], argc-3, &(argv[3]));

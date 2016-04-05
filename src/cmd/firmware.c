@@ -17,3 +17,9 @@ IMPLS(firmware, list)
 
   return 1;
 }
+
+IMPLS_HELP(firmware, list)
+{
+  printf("Print available firmware variants.\n");
+  return 1;
+}

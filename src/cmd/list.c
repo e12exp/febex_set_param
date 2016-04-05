@@ -129,3 +129,16 @@ IMPL(list)
   return 1;
 }
 
+IMPL_HELP(list)
+{
+  printf("List configuration parameters of one or more modules.\n"
+      "  sfp: Index of SFP (0 - 3) of which the parameters should be listed (Default: all)\n"
+      "  module: Index of module of which the parameters should be listed (Default: all)\n\n"
+      "Note (1): Without any parameters, list will give you a complete dump of all parameters.\n"
+      "Note (2): Depending on the current display level, some configuration parameters "
+      "may be omitted.\n"
+      "See \"help display\" for details on the display level.\n");
+
+  return 1;
+}
+

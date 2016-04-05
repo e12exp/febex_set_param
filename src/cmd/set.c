@@ -9,9 +9,7 @@
 uint8_t _set_get_interpret_range(char *range, int *min, int *max)
 {
   char *p[2];
-  int n = 0;
 
-  n = 0;
   p[0] = strtok(range, "-");
   if(p[0])
     p[1] = strtok(NULL, "-");
@@ -158,6 +156,17 @@ IMPL(set)
   return 1;
 }
 
+IMPL_HELP(set)
+{
+  printf("Set the value of a configuration parameter.\n\n"
+      "  variable: Definition of parameter(s) to set\n"
+      "  value: Value to set\n\n"
+      "Note: The allowed values depend on the specific parameter.\n"
+      "See \"help get\" for the description of the parameter definition.\n");
+
+  return 1;
+}
+
 IMPL(get)
 {
   ARGS_INIT
@@ -201,6 +210,49 @@ IMPL(get)
       }
     }
   }
+
+  return 1;
+}
+
+IMPL_HELP(get)
+{
+  printf("Print the value of a configuration parameter.\n"
+      "  variable: Definition of parameter(s) to get (see below)\n\n"
+      "Parameter definition:\n"
+      "  For module-wide parameters the basic syntax is\n"
+      "  > get <sfp>.<module>.<parameter_name>\n"
+      "  and for per-channel parameters the basic syntax is\n"
+      "  > get <sfp>.<module>.<channel>.<parameter_name>\n"
+      "  where\n"
+      "    <sfp> is the index of SFP to use (0 - 3),\n"
+      "    <module> is the index of the desired module in the given the SFP (0 - 255),\n"
+      "    <channel> is the channel number to use (depending on firmware) and\n"
+      "    <parameter_name> is the name of the parameter to get/set.\n\n"
+      "  For the numeric values <sfp>, <module> and <channel>, ranges and wildcards "
+      "are allowed to get/set the values of multiple modules/channels at once:\n"
+      "    Ranges may be given as\n"
+      "      <first>-<last>\n"
+      "      where <first> and <last> are the IDs of the first/last SFP/module/channel to use.\n\n"
+      "    An asterisk * is the wildcard character meaning\n"
+      "      - All SFPs/modules/channels if used allone\n"
+      "      - The first SFP/module/channel if used as <first> in a range (i.e. index 0)\n"
+      "      - The last available SFP/module/channel if used as <last> in a range.\n\n"
+      "  Examples:\n"
+      "    > get 0.2.mau_peaktime\n"
+      "    Get the value of the parameter \"mau_peaktime\" of the third module (index 2) "
+      "in the first SFP chain (index 0).\n\n"
+      "    > set 0.1.3.cfd_threshold_high 200\n"
+      "    Set the value of the parameter \"cfd_threshold_high\" of the fourth channel (index 3) "
+      "of the second module (index 1) in the first SFP chain (index 0) to '200'.\n\n"
+      "    > set *.*.*.cfd_threshold_high 200\n"
+      "    Set the value of the parameter \"cfd_threshold_high\" of ALL channels in all modules in all SFP chains to '200'.\n\n"
+      "    > get 0.1-3.5.cfd_threshold_low\n"
+      "    Get the value of the parameter \"cfd_threshold_low\" of the sixth channel (index 5) "
+      "of the modules with IDs 1 - 3 of the first SFP chain (index 0).\n\n"
+      "    > set 1.2.*.cfd_threshold_low 100\n"
+      "    Set the value of the parameter \"cfd_threshold_low\" of all channels of the "
+      "third module (index 2) in the second SFP chain (index 1) to '100'.\n\n"
+      "  Of course, any combination of literals, ranges and wildcards are allowed. Be creative.\n");
 
   return 1;
 }

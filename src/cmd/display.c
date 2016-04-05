@@ -7,10 +7,14 @@
 
 IMPL(display)
 {
-  ARGS_INIT;
-  ARG_STR(level);
+//  ARGS_INIT;
+//  ARG_STR(level);
 
-  if(strlen(level) == 0)
+  char *level = NULL;
+  if(argc != 0)
+    level = argv[0];
+
+  if(level == NULL || strlen(level) == 0)
   {
     char *strlevel;
     switch(g_display_level)
@@ -59,3 +63,14 @@ IMPL(display)
 
   return 1;
 }
+
+IMPL_HELP(display)
+{
+  printf("Get or set the current display level.\n"
+      "Depending on the display level, the \"list\" command will omit possibly confusing "
+      "parameters and only show, what the programmer thinks is reasonable for you to change.\n\n"
+      "  level: Set the display level to this value.\n\n"
+      "For your convenience, here is the output of the bare \"display\" command:\n\n");
+  return cmd_impl_display(0, NULL);
+}
+

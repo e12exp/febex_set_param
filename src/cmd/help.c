@@ -27,11 +27,18 @@ IMPL(help)
   ARG_STR(command)
   ARG_STR(sub_command)
 
+  uint8_t verbose = 1;
+
   if(argc < 1 || command == NULL)
+  {
     command = NULL;
+    verbose = 0;
+  }
 
   if(argc < 2 || sub_command == NULL || strcmp(sub_command, "") == 0)
+  {
     sub_command = NULL;
+  }
 
   if(command != NULL && strcmp(command, "meaningoflife") == 0)
   {
@@ -41,8 +48,6 @@ IMPL(help)
 
   if(command == NULL)
     printf("Available commands:\n");
-  else
-    printf("Usage: ");
 
   int i;
 
@@ -51,8 +56,20 @@ IMPL(help)
     if(command == 0 || strcmp(command, commands[i].name) == 0)
     {
       if(sub_command == NULL || (commands[i].subcmd != NULL && strcmp(sub_command, commands[i].subcmd) == 0))
+      {
 	print_help_cmd(&commands[i]);
+	if(verbose && ((sub_command == NULL && commands[i].subcmd == NULL) || (sub_command != NULL && commands[i].subcmd != NULL)) && commands[i].func_help != NULL)
+	{
+		printf("\n");
+		(*commands[i].func_help)(0, NULL);
+	}
+      }
     }
+  }
+
+  if(command == NULL)
+  {
+    printf("\nType help <command> to get help on a specific command.\n");
   }
 
   return 1;

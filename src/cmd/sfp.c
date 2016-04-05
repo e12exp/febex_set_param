@@ -18,3 +18,11 @@ IMPLS(add, sfp)
 
   return 1;
 }
+
+IMPLS_HELP(add, sfp)
+{
+  printf("Add new SFP.\n"
+      "  num: Number of SFPs to add (1 - 4)\n");
+
+	return 1;
+}

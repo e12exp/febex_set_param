@@ -35,6 +35,19 @@ IMPLS(add, module)
   return 1;
 }
 
+IMPLS_HELP(add, module)
+{
+  printf("Add module(s) to given SFP.\n"
+      "  sfp: Index of SFP (0 - 3) to add modules to\n"
+      "  num: Number of modules to add (Default: 1)\n"
+      "  firmware: Name of firmware to use for the module\n"
+      "            If omitted, the default firmware is used.\n"
+      "            Use the command \"firmware list\" to see the available firmwares.\n\n"
+      "Note: New modules will always be added to the end of the existing module chain.\n");
+
+  return 1;
+}
+
 IMPLS(rm, module)
 {
   ARGS_INIT
@@ -49,6 +62,18 @@ IMPLS(rm, module)
   }
 
   print_num_modules();
+  return 1;
+}
+
+IMPLS_HELP(rm, module)
+{
+  printf("Delete module(s) from a given SFP.\n"
+      "  sfp: Index of SFP (0 - 3) of which the module(s) should be deleted\n"
+      "  module: Index of first module in the chain to delete\n"
+      "  num: Number of modules to delete (Default: 1)\n\n"
+      "Note: If the modules are not deleted from the end of the chain,\n"
+      "the following modules will be shifted up in the chain.\n");
+
   return 1;
 }
 
@@ -98,6 +123,18 @@ IMPLS(cp, module)
   }
 
   print_num_modules();
+
+  return 1;
+}
+
+IMPLS_HELP(cp, module)
+{
+  printf("Copy module within one SFP or from one to another.\n"
+      "  src_sfp: Index of SFP (0 - 3) of the source module\n"
+      "  src_mod: Module number in given SFP chain to copy\n"
+      "  dst_sfp: Index of SFP (0 - 3) to which the copied modules should be inserted\n"
+      "  num: Number of identical copies to insert (Default: 1)\n\n"
+      "Note: The command will create <num> copies of one and the same source module.\n");
 
   return 1;
 }

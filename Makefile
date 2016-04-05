@@ -16,11 +16,12 @@ all: $(TARGET_BIN)
 -include $(OBJ_BIN:.o=.d)
 
 $(TARGET_BIN): $(OBJ_BIN)
-	@echo "[LD] $@"
+	@/bin/bash -c "echo -e \"\e[1;33mLD\e[0m $@\""
 	@$(GCC) $(GCC_FLAGS) $+ $(LIBGOSIP_A) $(LIBS) -o $@
+	@/bin/bash -c "echo -e \"\e[1;32mBuilding complete\e[0m\""
 
 o/%.o: src/%.c
-	@echo "[CC] $@"
+	@/bin/bash -c "echo -e \"\e[1;33mCC\e[0m $@\""
 	@mkdir -p o
 	@mkdir -p o/cmd
 	@mkdir -p o/fw/hooks

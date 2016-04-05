@@ -3,11 +3,21 @@
 
 #include <stdint.h>
 
+// Command implementation
 #define IMPL(_name) int cmd_impl_ ## _name (int argc, char **argv)
 #define DECL(_name) IMPL(_name)
 
+// Command help implementation
+#define IMPL_HELP(_name) int cmd_help_impl_ ## _name (int argc, char **argv)
+#define DECL_HELP(_name) IMPL_HELP(_name)
+
+// Sub-command implementation
 #define IMPLS(_name, _subcmd) int cmd_impl_ ## _name ##  _ ## _subcmd (int argc, char **argv) 
 #define DECLS(_name, _subcmd) IMPLS(_name, _subcmd)
+
+// Sub-command help implementation
+#define IMPLS_HELP(_name, _subcmd) int cmd_help_impl_ ## _name ##  _ ## _subcmd (int argc, char **argv) 
+#define DECLS_HELP(_name, _subcmd) IMPLS_HELP(_name, _subcmd)
 
 #define ARGS_INIT int _impls_arg_n = 0;
 #define ARG_STR(_name) char *_name = argv[_impls_arg_n++];
@@ -28,6 +38,7 @@ typedef struct
   char *args_optional[32];
 
   cmd_cb_t func;
+  cmd_cb_t func_help;
 }
 cmd_impl_t;
 

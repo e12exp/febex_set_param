@@ -7,8 +7,15 @@
 #define ARGS(...) { __VA_ARGS__ }
 #define ARG(_name, _def) #_name, #_def
 
-#define CMD(_name, _num_req, _req, _num_opt, _opt) {#_name, NULL, _num_req, _req, _num_opt, _opt, cmd_impl_ ## _name}
-#define CMDS(_name, _subcmd, _num_req, _req, _num_opt, _opt) {#_name, #_subcmd, _num_req, _req, _num_opt, _opt, cmd_impl_## _name ## _ ## _subcmd}
+// Define command without help function
+#define CMD(_name, _num_req, _req, _num_opt, _opt) {#_name, NULL, _num_req, _req, _num_opt, _opt, cmd_impl_ ## _name, NULL}
+// Define command with help function
+#define CMDH(_name, _num_req, _req, _num_opt, _opt) {#_name, NULL, _num_req, _req, _num_opt, _opt, cmd_impl_ ## _name, cmd_help_impl_ ## _name}
+
+// Define sub-command without help function
+#define CMDS(_name, _subcmd, _num_req, _req, _num_opt, _opt) {#_name, #_subcmd, _num_req, _req, _num_opt, _opt, cmd_impl_## _name ## _ ## _subcmd, NULL }
+// Define sub-command with help function
+#define CMDSH(_name, _subcmd, _num_req, _req, _num_opt, _opt) {#_name, #_subcmd, _num_req, _req, _num_opt, _opt, cmd_impl_## _name ## _ ## _subcmd, cmd_help_impl_ ## _name ## _ ## _subcmd }
 
 #include "commands.def"
 

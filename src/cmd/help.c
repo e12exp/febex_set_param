@@ -88,6 +88,10 @@ IMPL(help)
             command_found = 1;
             printf("%s parameter %s (Firmware %s)\n", (cfg->global ? "Module" : "Channel"),
                 cfg->name, fw->name);
+            if(cfg->unit != NULL)
+            {
+              printf("Unit: %s\n", cfg->unit);
+            }
             if(cfg->description != NULL)
             {
               printf("%s\n\n", cfg->description);

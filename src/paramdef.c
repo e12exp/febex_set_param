@@ -37,6 +37,7 @@ firmware_list_t *g_fw_list_current;
   l->v.vsigned = _signed; \
   l->v.display_level = fw_default_display_level; \
   l->v.description = NULL; \
+  l->v.unit = NULL; \
   conf_list_add(l, &g_fw_list_current->fw);
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
@@ -61,7 +62,7 @@ firmware_list_t *g_fw_list_current;
 // Define category for parameter (reserved for future use)
 #define CAT(_category)
 // Define unit for parameter (reserved for future use)
-#define UNIT(_unit)
+#define UNIT(_unit) l->v.unit = _unit;
 
 #define DISPLAY_HIDDEN l->v.display_level = hidden;
 #define DISPLAY_EXPERT l->v.display_level = expert;

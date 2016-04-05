@@ -187,13 +187,13 @@ IMPL(get)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
-	int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
-
-	if(conf_val == NULL)
- 	 {
- 	   printf("Invalid configuration variable.\n");
- 	   return 0;
- 	 }
+        int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
+        
+        if(conf_val == NULL)
+        {
+          fprintf(stderr, "Invalid configuration variable.\n");
+          return 0;
+        }
 
         if(vardef->hooks.get != NULL)
           (*vardef->hooks.get)(sfp, mod, c, name, conf_val);
@@ -204,9 +204,14 @@ IMPL(get)
           printf("%d.%03d.%02d.%-37s", sfp, mod, c, name);
 
         if(vardef->type == conf_type_enum)
-          printf(": %s (%d)\n", enum_get_value_display(vardef, *conf_val), *conf_val);
+          printf(": %s (%d)", enum_get_value_display(vardef, *conf_val), *conf_val);
         else
-          printf(" [%d - %5" PRId64 "]: %d\n", val_min, val_max, *conf_val);
+          printf(" [%d - %5" PRId64 "]: %d", val_min, val_max, *conf_val);
+
+        if(vardef->unit != NULL)
+          printf(" (x %s)\n", vardef->unit);
+        else
+          printf("\n");
       }
     }
   }

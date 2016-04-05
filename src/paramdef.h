@@ -43,6 +43,7 @@ typedef struct
 {
   char *name;
   char *description; 
+  char *unit;
 
   conf_type_t type;
 

@@ -117,12 +117,21 @@ IMPL(list)
                 printf("%s%s", var->value_def->enum_value_current->display,
                     var->value_def->enum_value_current->next != NULL ? ", " : "");
               }
-              printf("]: %s (%d)\n", enum_get_value_display(var->value_def, var->value_data), var->value_data);
+              printf("]: %s (%d)", enum_get_value_display(var->value_def, var->value_data), var->value_data);
           }
           else
           {
-              printf(" [%" PRId64 " - %5" PRId64 "]: %d\n", 
+              printf(" [%" PRId64 " - %5" PRId64 "]: %d", 
                  val_min, val_max, var->value_data);
+          }
+
+          if(var->value_def->unit != NULL)
+          {
+            printf(" (x %s)\n", var->value_def->unit);
+          }
+          else if(var->value_def->type != conf_type_mask)
+          {
+            printf("\n");
           }
         }
         printf("\n");

@@ -42,6 +42,7 @@ enum_val_t;
 typedef struct
 {
   char *name;
+  char *description; 
 
   conf_type_t type;
 

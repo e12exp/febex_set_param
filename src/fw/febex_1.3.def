@@ -6,68 +6,117 @@ fw_default_display_level = user;
 
 BASE_ADDR(0x300100)
 
-DEF_VAR_INT(cfd_peaktime, 1, 0, 0, 0x9, 0)
+DEF_VAR_INT(discr_integration_time, 1, 0, 0, 0x9, 0)
+  DESCR("Integration time (peaking time) of the discriminators trapezoidal filter (=rise time of trapezoidal).")
+  UNIT(20 ns)
+  CAT(Discriminator)
 
-DEF_VAR_INT(cfd_shift_right, 1, 0, 0x10, 0x13, 0)
-DISPLAY_EXPERT
+DEF_VAR_INT(discr_shift_right, 1, 0, 0x10, 0x13, 0)
+  DESCR("Bit shift after the discriminators trapezoidal filter.")
+  CAT(Discriminator)
+  DISPLAY_EXPERT
 
 DEF_VAR_INT(bl_shift_right, 1, 0, 0x18, 0x1b, 0)
-DISPLAY_EXPERT
+  DESCR("Bit shift for internal baseline value. MUST equal log2(bl_integration_time)!")
+  CAT(Baseline Reconstruction)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
 NEXT_REG
 
-DEF_VAR_INT(cfd_gaptime, 1, 0, 0, 0x9, 0)
+DEF_VAR_INT(discr_gaptime, 1, 0, 0, 0x9, 0)
+  DESCR("Gap time of the discriminators trapezoidal filter (=flat top + rise time of trapezoidal).")
+  UNIT(20 ns)
+  CAT(Discriminator)
 
-DEF_VAR_INT(cfd_gatesize, 1, 0, 0x10, 0x1f, 0)
+DEF_VAR_INT(energy_gate_size, 1, 0, 0x10, 0x1f, 0)
+  DESCR("Length of the active gate following an accepted trigger signal for the pulse height measurement via peak sensing.")
+  UNIT(40 ns)
+  CAT(Energy)
 
 ///////////////////////////////
 
 NEXT_REG
 
-DEF_VAR_INT(bl_window_size, 1, 0, 0, 0x9, 0)
+DEF_VAR_INT(bl_integration_time, 1, 0, 0, 0x9, 0)
+  DESCR("Integration time for the baseline reconstruction. MUST be power of two!")
+  UNIT(40 ns)
+  CAT(Baseline)
+
 DEF_VAR_INT(bl_exclude_gatesize, 1, 0, 0x10, 0x1f, 0)
+  DESCR("Length of the gate following an accepted trigger in which the baseline value is frozen.")
+  UNIT(40 ns)
+  CAT(Baseline)
 
 ///////////////////////////////
 
 NEXT_REG
 
-DEF_VAR_INT(mau_peaktime, 1, 0, 0, 0x9, 0)
+DEF_VAR_INT(mau_integration_time, 1, 0, 0, 0x9, 0)
+  DESCR("Integration time of the Moving Average Unit. Affects pulse height measurement and QPID.")
+  UNIT(40 ns)
+  CAT(MAU ("Slow Shaper"))
 
 DEF_VAR_INT(mau_shift_right, 1, 0, 0x10, 0x13, 0)
-DISPLAY_EXPERT
+  DESCR("Bit shift after Moving Average Unit.")
+  CAT(MAU ("Slow Shaper"))
+  DISPLAY_EXPERT
 
 DEF_VAR_INT(mwd_shift_right, 1, 0, 0x18, 0x1b, 0)
-DISPLAY_EXPERT
+  DESCR("Bit shift after Moving Window Deconvolution.")
+  CAT(MWD ("Tau Correction"))
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
 NEXT_REG
 
 DEF_VAR_INT(mwd_window_size, 1, 0, 0, 0x9, 0)
+  DESCR("Window size of the Moving Window Deconvolution (charge integration time).")
+  CAT(MWD ("Tau Correction"))
+  UNIT(40 ns)
 
-DEF_VAR_INT(energy_peaktime, 1, 0, 0x10, 0x19, 0)
+DEF_VAR_INT(energy_integration_time, 1, 0, 0x10, 0x19, 0)
+  DESCR("Additional integration time for the pulse height measurement.")
+  CAT(Energy)
+  UNIT(40 ns)
 
 ///////////////////////////////
 
 NEXT_REG
 
 DEF_VAR_INT(mwd_tau, 1, 0, 0x0, 0x11, 0)
+  DESCR("RC time constant of preamplifier for the Moving Window Deconvolution.")
+  CAT(MWD ("Tau Correction"))
+  UNIT(40 ns)
 
 DEF_VAR_INT(energy_shift_right, 1, 0, 0x18, 0x1b, 0)
-DISPLAY_EXPERT
+  DESCR("Bit shift after pulse height measurement.")
+  CAT(Energy)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
 NEXT_REG
 
 DEF_VAR_INT(qpid_t1, 1, 0, 0x0, 0x9, 0)
+  DESCR("Start of fast integration window.")
+  UNIT(40 ns)
+  CAT(QPID)
+
 DEF_VAR_INT(qpid_t2, 1, 0, 0x10, 0x19, 0)
-NEXT_REG
+  DESCR("End of fast integration window.")
+  UNIT(40 ns)
+  NEXT_REG
 
 DEF_VAR_INT(qpid_t3, 1, 0, 0x0, 0x9, 0)
+  DESCR("Start of slow integration window.")
+  UNIT(40 ns)
+
 DEF_VAR_INT(qpid_t4, 1, 0, 0x10, 0x19, 0)
+  DESCR("End of slow integration window.")
+  UNIT(40 ns)
 
 ///////////////////////////////
 
@@ -77,7 +126,9 @@ DEF_VAR(qpid_b_over_d, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
 DISPLAY_HIDDEN
 
 DEF_VAR_INT(qpid_nf_shift_right, 1, 0, 0x18, 0x1b, 0)
-DISPLAY_EXPERT
+  DESCR("Bit shift for fast amplitude Nf after QPID.")
+  CAT(QPID)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
@@ -87,7 +138,9 @@ DEF_VAR(qpid_c_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
 DISPLAY_HIDDEN
 
 DEF_VAR_INT(qpid_ns_shift_right, 1, 0, 0x18, 0x1b, 0)
-DISPLAY_EXPERT
+  DESCR("Bit shift for slow amplitude Ns after QPID.")
+  CAT(QPID)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
@@ -96,69 +149,112 @@ NEXT_REG
 DEF_VAR(qpid_inv_a_minus_bc_over_d, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
 DISPLAY_HIDDEN
 
-DEF_VAR_INT(qpid_peaktime, 1, 0, 0x18, 0x1b, 0)
-NEXT_REG
+DEF_VAR_INT(qpid_integration_time, 1, 0, 0x18, 0x1b, 0)
+  DESCR("Additional integration time for QPID.")
+  UNIT(40 ns)
+  CAT(QPID)
 
 ///////////////////////////////
+
+NEXT_REG
 
 DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x16, 0, 0)
 DISPLAY_HIDDEN
 
 DEF_VAR_INT(num_events_readout, 1, 0, 0x18, 0x1f, 0)
-DISPLAY_EXPERT
+  DESCR("Threshold for the number of recorded events. As soon as one channel exceeds this number of recorded events, a readout request is issued.")
+  CAT(Readout)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
 NEXT_REG
 
 DEF_VAR_INT(trace_length, 1, 0, 0x00, 0x0f, 0)
+  DESCR("Length of trace to record (if enabled by opmode_enable_trace).")
+  UNIT(40 ns)
+  CAT(Trace)
+
 DEF_VAR_INT(logic_gate_size, 1, 0, 0x10, 0x1f, 0)
+  DESCR("Size of logical processing gate following an accepted trigger. This is a timeout after which the event gets closed. Must be >= all other gate sizes / trace length.")
+  UNIT(40 ns)
+  CAT(Operation Mode)
 
 ///////////////////////////////
 
 NEXT_REG
 
 DEF_VAR_INT_SIGNED(tot_threshold, 1, 0, 0x00, 0x11, 0)
+  DESCR("Threshold for Time Over Threshold measurement (if enabled by tot_enabled).")
+  CAT(Time Over Threshold)
 
 DEF_VAR_BOOL(tot_enabled, 1, 0, 0x18, 0)
+  DESCR("Enable Time Over Threshold measurement.")
+  CAT(Time Over Threshold)
 
 DEF_VAR_BOOL(use_fixed_bl, 1, 0, 0x19, 0)
-DISPLAY_EXPERT
+  DESCR("Disable continous baseline reconstruction and use fixed baseline value instead. Recommented for highest rates only.")
+  CAT(Baseline)
+  DISPLAY_EXPERT
 
 DEF_VAR_BOOL(energy_bias_correct, 1, 0, 0x1a, 0)
-DISPLAY_EXPERT
+  DESCR("Subtract first MWD trace sample following a trigger from the peak value to get an event-by-event baseline/bias correction. Recommented for highest rates only together with use_fixed_bl. Introduces additional noise.")
+  CAT(Energy)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
 NEXT_REG
 
 DEF_VAR_INT_SIGNED(fixed_bl_val, 1, 0, 0x00, 0x11, 0)
-DISPLAY_EXPERT
+  DESCR("Fixed baseline value (if enabled by use_fixed_bl). Note: The baseline bit shift is still applied!")
+  CAT(Baseline)
+  DISPLAY_EXPERT
 
 DEF_VAR_MASK(veto_dst, 1, 0, 24, 31, 0)
-DISPLAY_EXPERT
+  DESCR("Internal trigger bus destination(s) for memory controller veto/busy signal. Bit mask.")
+  CAT(Operation Mode)
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
 BASE_ADDR(0x300140)
 
 DEF_VAR_BOOL(opmode_run, 0, 4, 0, 0)
-DEF_VAR_BOOL(opmode_dbg, 0, 4, 1, 0)
+  DESCR("Enable channel. Note: Due to the 4-channel interlacing, channels are always activated in groups of 4.")
+  CAT(Operation Mode)
+
+DEF_VAR_BOOL(opmode_enable_trace, 0, 4, 1, 0)
+  DESCR("Enable recording of traces.")
+  CAT(Trace)
+
 DEF_VAR_BOOL(opmode_invert, 0, 4, 2, 0)
+  DESCR("Invert input signal polarity. Note: Use opmode_invert=1 with FAB, =0 without.")
+  CAT(Operation Mode)
 
 DEF_VAR_BOOL(proton_trigger_enable, 0, 4, 3, 0)
+  DESCR("Enable proton trigger")
+  CAT(Operation Mode)
 
 DEF_VAR_BOOL(proton_trigger_walk_correction, 0, 4, 4, 0)
-DISPLAY_EXPERT
+  DESCR("Enable walk correction (coincidence with timing discriminator output) for proton trigger output.")
+  CAT(Operation Mode)
+  DISPLAY_EXPERT
 
 DEF_VAR_BOOL(trigger_feedback_busy, 0, 4, 5, 0)
-DISPLAY_EXPERT
+  DESCR("Output channel busy/veto/deadtime signal to module wide busy signal.")
+  CAT(Operation Mode)
+  DISPLAY_EXPERT
 
 DEF_VAR_BOOL(trigger_enable_validation, 0, 4, 6, 0)
-DISPLAY_EXPERT
+  DESCR("Enable trigger validation. If enabled, a coincidence between timing and validation trigger inputs are required. Otherwise, the timing trigger input is used directly.")
+  CAT(Trigger Input)
+  DISPLAY_EXPERT
 
-DEF_VAR_BOOL(trigger_enable_walk_correction, 0, 4, 7, 0)
-DISPLAY_EXPERT
+DEF_VAR_BOOL(discr_enable_walk_correction, 0, 4, 7, 0)
+  DESCR("Enable walk correction on the discriminators timing output.")
+  CAT(Discriminator)
+  DISPLAY_EXPERT
 
 DEF_VAR_ENUM(tracemode, 0, 4, 8, 0xf, 0)
   ENUM_VAL(0, raw)
@@ -168,32 +264,49 @@ DEF_VAR_ENUM(tracemode, 0, 4, 8, 0xf, 0)
   ENUM_VAL(4, mwd)
   ENUM_VAL(7, raw_50mhz)
 
-DEF_VAR_INT(cfd_hysteresis_threshold, 0, 4, 0x10, 0x1b, 0)
+  DESCR("Select trace type to output (if enabled by opmode_enable_trace).")
+
+DEF_VAR_INT(discr_hysteresis_threshold, 0, 4, 0x10, 0x1b, 0)
+  DESCR("Hysteresis threshold for pileup detection.")
+  CAT(Disciminator)
 
 ///////////////////////////////
 
 BASE_ADDR(0x300180)
 
-DEF_VAR_INT(cfd_threshold_high, 0, 4, 0, 0xb, 0)
-DISPLAY_BEGINNER
+DEF_VAR_INT(discr_threshold_gamma, 0, 4, 0, 0xb, 0)
+  DESCR("Gamma discrimination threshold.")
+  CAT(Discriminator)
+  DISPLAY_BEGINNER
 
-DEF_VAR_INT(cfd_delay, 0, 4, 0x10, 0x19, 0)
+DEF_VAR_INT(signal_delay, 0, 4, 0x10, 0x19, 0)
+  DESCR("Signal delay in the analysis branch. Increasing this delay increases the time gap between the accepted trigger and signals rising edge (which is negative without any delay).")
+  UNIT(40 ns)
+  CAT(Trigger Input)
 
 ///////////////////////////////
 
 BASE_ADDR(0x3001c0)
 
 DEF_VAR_INT(trigger_timing_delay, 0, 4, 0, 7, 0)
-DISPLAY_EXPERT
+  DESCR("Delay for timing trigger input. Used to adjust timing and validation trigger for coincidence.")
+  UNIT(10 ns)
+  CAT(Trigger Input)
+  DISPLAY_EXPERT
 
 DEF_VAR_INT(trigger_validation_gate_length, 0, 4, 8, 15, 0)
-DISPLAY_EXPERT
+  DESCR("Gate length following any (delayed) validation trigger input for coincidence with timing trigger.")
+  UNIT(10 ns)
+  CAT(Trigger Input)
+  DISPLAY_EXPERT
 
 DEF_VAR_INT(trigger_validation_delay, 0, 4, 16, 23, 0)
-DISPLAY_EXPERT
+  DESCR("Delay for validation trigger input. Used to adjust timing and validation trigger for coincidence.")
+  CAT(Trigger Input)
+  DISPLAY_EXPERT
 
 DEF_VAR_INT(proton_trigger_gate_length, 0, 4, 0x18, 0x1f, 0)
-DISPLAY_EXPERT
+  DISPLAY_EXPERT
 
 ///////////////////////////////
 
@@ -239,11 +352,15 @@ DISPLAY_EXPERT
 
 BASE_ADDR(0x300240)
 
-DEF_VAR_INT(cfd_threshold_low, 0, 4, 0, 0xb, 0)
-DISPLAY_BEGINNER
+DEF_VAR_INT(discr_threshold_timing, 0, 4, 0, 0xb, 0)
+  DESCR("Discriminator threshold for timing reconstruction. Should be as low as possible.")
+  CAT(Discriminator)
+  DISPLAY_BEGINNER
 
-DEF_VAR_INT(proton_trigger_threshold, 0, 4, 0x10, 0x1b, 0)
-DISPLAY_BEGINNER
+DEF_VAR_INT(discr_threshold_proton, 0, 4, 0x10, 0x1b, 0)
+  DESCR("Proton discrimination threshold.")
+  CAT(Discriminator)
+  DISPLAY_BEGINNER
 
 ///////////////////////////////
 

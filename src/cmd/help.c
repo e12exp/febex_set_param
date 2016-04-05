@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../command.h"
+#include "../paramdef.h"
 
 void print_help_cmd(cmd_impl_t *cmd)
 {
@@ -27,6 +28,9 @@ IMPL(help)
   ARG_STR(command)
   ARG_STR(sub_command)
 
+  firmware_def_t *fw = NULL;
+  conf_value_def_t *cfg = NULL;
+
   uint8_t verbose = 1;
 
   if(argc < 1 || command == NULL)
@@ -50,6 +54,7 @@ IMPL(help)
     printf("Available commands:\n");
 
   int i;
+  uint8_t command_found = 0;
 
   for(i = 0; i < g_num_commands; i++)
   {
@@ -57,19 +62,51 @@ IMPL(help)
     {
       if(sub_command == NULL || (commands[i].subcmd != NULL && strcmp(sub_command, commands[i].subcmd) == 0))
       {
-	print_help_cmd(&commands[i]);
-	if(verbose && ((sub_command == NULL && commands[i].subcmd == NULL) || (sub_command != NULL && commands[i].subcmd != NULL)) && commands[i].func_help != NULL)
-	{
-		printf("\n");
-		(*commands[i].func_help)(0, NULL);
-	}
+        command_found = 1;
+
+        print_help_cmd(&commands[i]);
+        if(verbose && ((sub_command == NULL && commands[i].subcmd == NULL) || (sub_command != NULL && commands[i].subcmd != NULL)) && commands[i].func_help != NULL)
+        {
+          printf("\n");
+          (*commands[i].func_help)(0, NULL);
+        }
       }
     }
   }
 
+  if(command != NULL && !command_found)
+  {
+    // Try to get help on a parameter
+    for(fw = fw_list_first(); fw != NULL; fw = fw_list_next())
+    {
+      if(sub_command == NULL || strcmp(sub_command, fw->name) == 0)
+      {
+        for(cfg = conf_list_first(fw); cfg != NULL; cfg = conf_list_next(fw))
+        {
+          if(strcmp(command, cfg->name) == 0)
+          {
+            command_found = 1;
+            printf("%s parameter %s (Firmware %s)\n", (cfg->global ? "Module" : "Channel"),
+                cfg->name, fw->name);
+            if(cfg->description != NULL)
+            {
+              printf("%s\n\n", cfg->description);
+            }
+            else
+            {
+              printf("No help available for this parameter.\n\n");
+            }
+          }
+        }
+      }
+    } 
+  }
+
   if(command == NULL)
   {
-    printf("\nType help <command> to get help on a specific command.\n");
+    printf("\nType help <command> to get help on a specific command or\n"
+             "     help <parameter> [firmware] to get help on a specific parameter.\n\n"
+             "You can use the \"list\" command to see the available parameters.\n");
   }
 
   return 1;

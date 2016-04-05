@@ -36,6 +36,7 @@ firmware_list_t *g_fw_list_current;
   l->v.channel_shift = _shift; \
   l->v.vsigned = _signed; \
   l->v.display_level = fw_default_display_level; \
+  l->v.description = NULL; \
   conf_list_add(l, &g_fw_list_current->fw);
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
@@ -54,6 +55,13 @@ firmware_list_t *g_fw_list_current;
   DEF_VAR(_name, conf_type_enum, _global, c_addr, _offset, _low, _high, _shift, 0)
 
 #define ENUM_VAL(_val, _display) enum_value_list_add(_val, #_display, &l->v);
+
+// Define description for parameter
+#define DESCR(_descr) l->v.description = _descr;
+// Define category for parameter (reserved for future use)
+#define CAT(_category)
+// Define unit for parameter (reserved for future use)
+#define UNIT(_unit)
 
 #define DISPLAY_HIDDEN l->v.display_level = hidden;
 #define DISPLAY_EXPERT l->v.display_level = expert;

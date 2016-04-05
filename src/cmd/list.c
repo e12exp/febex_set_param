@@ -96,9 +96,13 @@ IMPL(list)
           }
 
           if(c == -1)
-            printf("%d.%03d.%-40s (0x%06x)", sfp, mod, var->value_def->name, var->value_def->addr);
+            printf("%d.%03d.%-40s", sfp, mod, var->value_def->name);
           else
-            printf("%d.%03d.%02d.%-37s (0x%06x)", sfp, mod, c, var->value_def->name, var->value_def->addr);
+            printf("%d.%03d.%02d.%-37s", sfp, mod, c, var->value_def->name);
+
+          if(g_display_level <= expert)
+            // Show variable address
+            printf(" (0x%06x)", var->value_def->addr);
 
           if(var->value_def->type == conf_type_mask)
           {

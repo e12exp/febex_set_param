@@ -32,7 +32,7 @@ DEF_VAR_INT(discr_gaptime, 1, 0, 0, 0x9, 0)
 
 DEF_VAR_INT(energy_gate_size, 1, 0, 0x10, 0x1f, 0)
   DESCR("Length of the active gate following an accepted trigger signal for the pulse height measurement via peak sensing.")
-  UNIT("40 ns")
+  UNIT("20 ns")
   CAT("Energy")
 
 ///////////////////////////////

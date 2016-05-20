@@ -21,7 +21,8 @@ typedef enum
 }
 display_level_t;
 
-typedef int (*variable_callback_t)(uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
+struct s_file_data;
+typedef int (*variable_callback_t)(struct s_file_data *file, uint8_t sfp, uint8_t module, int8_t channel, const char *varname, int32_t *val);
 
 typedef struct
 {

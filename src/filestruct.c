@@ -1,17 +1,13 @@
 #include "filestruct.h"
 
-regblock_list_t *g_regblock_first;
-regblock_list_t *g_regblock_last;
-regblock_list_t *g_regblock_current;
-
-void regblock_list_init()
+void regblock_list_init(regblock_list_ptr_t *list)
 {
-  g_regblock_first = NULL;
-  g_regblock_last = NULL;
-  g_regblock_current = NULL;
+  list->first = NULL;
+  list->last = NULL;
+  list->current = NULL;
 }
 
-void regblock_list_add(uint8_t block_size, uint8_t sfp, uint8_t module, uint32_t base_addr, uint32_t *data)
+void regblock_list_add(regblock_list_ptr_t *list, uint8_t block_size, uint8_t sfp, uint8_t module, uint32_t base_addr, uint32_t *data)
 {
 //  printf("add(%d, %d, %d, 0x%06x)\n", block_size, sfp, module, base_addr);
 
@@ -25,44 +21,44 @@ void regblock_list_add(uint8_t block_size, uint8_t sfp, uint8_t module, uint32_t
 
   elem->next = NULL;
 
-  if(g_regblock_first == NULL)
+  if(list->first == NULL)
   {
-    g_regblock_first = g_regblock_current = g_regblock_last = elem;
+    list->first = list->current = list->last = elem;
   }
   else
   {
-    g_regblock_last->next = elem;
-    g_regblock_current = g_regblock_last = elem;
+    list->last->next = elem;
+    list->current = list->last = elem;
   }
 }
 
-regblock_t *regblock_list_first()
+regblock_t *regblock_list_first(regblock_list_ptr_t *list)
 {
-  if(!g_regblock_first)
+  if(!list->first)
     return NULL;
  
-  g_regblock_current = g_regblock_first; 
-  return &g_regblock_first->data;
+  list->current = list->first; 
+  return &list->first->data;
 }
 
-regblock_t *regblock_list_next()
+regblock_t *regblock_list_next(regblock_list_ptr_t *list)
 {
-  if(!g_regblock_current)
+  if(!list->current)
     return NULL;
 
-  g_regblock_current = g_regblock_current->next;
+  list->current = list->current->next;
 
-  if(!g_regblock_current)
+  if(!list->current)
     return NULL;
 
-  return &g_regblock_current->data;
+  return &list->current->data;
 }
 
-int search_register_data(uint8_t sfp, uint8_t module, uint32_t addr, uint32_t *val)
+int search_register_data(regblock_list_ptr_t *list, uint8_t sfp, uint8_t module, uint32_t addr, uint32_t *val)
 {
   *val = 0;
 
-  uint32_t *v = get_register(sfp, module, addr);
+  uint32_t *v = get_register(list, sfp, module, addr);
 
   if(v == NULL)
     return 0;
@@ -71,10 +67,10 @@ int search_register_data(uint8_t sfp, uint8_t module, uint32_t addr, uint32_t *v
    return 1; 
 }
 
-uint32_t *get_register(uint8_t sfp, uint8_t module, uint32_t addr)
+uint32_t *get_register(regblock_list_ptr_t *list, uint8_t sfp, uint8_t module, uint32_t addr)
 {
   uint8_t offset;
-  regblock_t *data = regblock_list_first();
+  regblock_t *data = regblock_list_first(list);
 
   while(data != NULL)
   {
@@ -84,26 +80,26 @@ uint32_t *get_register(uint8_t sfp, uint8_t module, uint32_t addr)
       return &data->reg_data[offset];
     } 
 
-    data = regblock_list_next();
+    data = regblock_list_next(list);
   }
 
   return NULL;
 }
 
-void regblock_list_clear()
+void regblock_list_clear(regblock_list_ptr_t *list)
 {
   regblock_list_t *e;
-  g_regblock_current = g_regblock_first;
+  list->current = list->first;
   
-  while(g_regblock_current)
+  while(list->current)
   {
-    e = g_regblock_current;
+    e = list->current;
     free(e->data.reg_data);
     e = e->next;
-    free(g_regblock_current);
-    g_regblock_current = e;
+    free(list->current);
+    list->current = e;
   }
 
-  g_regblock_current = g_regblock_first = g_regblock_last = NULL;
+  list->current = list->first = list->last = NULL;
 }
 

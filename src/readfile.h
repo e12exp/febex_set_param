@@ -3,17 +3,16 @@
 
 #include <stdint.h>
 
+#include "data.h"
+
 #define FILEVERSION_RECENT 1
 
-extern char *g_fname;
-extern uint8_t g_fileversion;
+int readfile(file_data_t *file);
+void fill_data_from_file(file_data_t *file);
 
-int readfile();
-void fill_data_from_file();
+void fill_regdata_from_module_data(file_data_t *file);
 
-void fill_regdata_from_module_data();
-
-int write_file();
+int write_file(file_data_t *file);
 
 #endif
 

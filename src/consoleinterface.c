@@ -14,10 +14,11 @@ void print_num_modules()
 {
   uint8_t sfp;
 
-  printf("# SFPs: %d\n", g_num_sfp);
-  for(sfp = 0; sfp < g_num_sfp; sfp++)
+  printf("Active file: %d (%s)\n", g_active_file, g_file_data[g_active_file]->filename);
+  printf("# SFPs: %d\n", g_file_data[g_active_file]->num_sfp);
+  for(sfp = 0; sfp < g_file_data[g_active_file]->num_sfp; sfp++)
   {
-    printf("# modules on SFP %d: %d\n", sfp, g_num_modules[sfp]);
+    printf("# modules on SFP %d: %d\n", sfp, g_file_data[g_active_file]->num_modules[sfp]);
   }
 }
 

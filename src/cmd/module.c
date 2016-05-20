@@ -14,7 +14,7 @@ IMPLS(add, module)
 
   uint32_t fw_id;
 
-  if(sfp >= g_num_sfp)
+  if(sfp >= g_file_data[g_active_file]->num_sfp)
   {
     fprintf(stderr, "Invalid SFP.\n");
     return 0;
@@ -26,7 +26,7 @@ IMPLS(add, module)
     return 0;
   }
 
-  int module_id = module_data_add_module(sfp, num, fw_id);
+  int module_id = module_data_add_module(g_file_data[g_active_file], sfp, num, fw_id);
 
   printf("ID of (last) inserted module: %d\n", module_id);
 
@@ -55,7 +55,7 @@ IMPLS(rm, module)
   ARG_INT(module)
   ARG_INT(num)
 
-  if(!module_data_remove_module(sfp, module, num))
+  if(!module_data_remove_module(g_file_data[g_active_file], sfp, module, num))
   {
     fprintf(stderr, "Module(s) could not be removed.\n");
     return 0;
@@ -84,40 +84,54 @@ IMPLS(cp, module)
   ARG_INT(src_mod)
   ARG_INT(dst_sfp)
   ARG_INT(num)
+  ARG_INT(src_file)
+
+  file_data_t *file_dst = g_file_data[g_active_file];
+
+  if(src_file < 0)
+    src_file = g_active_file;
+
+  if(src_file >= g_num_files)
+  {
+    fprintf(stderr, "Invalid source file number.\n");
+    return 0;
+  }
+
+  file_data_t *file_src = g_file_data[src_file];
 
   int num_org, id_last, m, c, v;
   firmware_def_t *fw;
 
-  if(src_sfp >= g_num_sfp || src_mod >= g_num_modules[src_sfp])
+  if(src_sfp >= file_src->num_sfp || src_mod >= file_src->num_modules[src_sfp])
   {
     fprintf(stderr, "Invalid source.\n");
     return 0;
   }
 
-  if(dst_sfp >= g_num_sfp)
+  if(dst_sfp >= file_dst->num_sfp)
   {
     fprintf(stderr, "Invalid destination.\n");
     return 0;
   }
 
-  num_org = g_num_modules[dst_sfp];
+  num_org = file_dst->num_modules[dst_sfp];
 
-  fw = g_arr_module_data[src_sfp][src_mod].firmware;
-  id_last = module_data_add_module(dst_sfp, num, fw->id);
+  fw = file_src->module_data[src_sfp][src_mod].firmware;
+  id_last = module_data_add_module(file_dst, dst_sfp, num, fw->id);
 
   for(m = num_org; m <= id_last; m++)
   {
     for(v = 0; v < fw->num_global_config_vars; v++)
     {
-      g_arr_module_data[dst_sfp][m].arr_global_cfg[v].value_data
-	= g_arr_module_data[src_sfp][src_mod].arr_global_cfg[v].value_data;
+      file_dst->module_data[dst_sfp][m].arr_global_cfg[v].value_data
+        = file_src->module_data[src_sfp][src_mod].arr_global_cfg[v].value_data;
     }
     for(c = 0; c < fw->num_channels; c++)
     {
       for(v = 0; v < fw->num_channel_config_vars; v++)
       {
-	g_arr_module_data[dst_sfp][m].arr_channel_cfg[c][v].value_data
-	  = g_arr_module_data[src_sfp][src_mod].arr_channel_cfg[c][v].value_data;
+        file_dst->module_data[dst_sfp][m].arr_channel_cfg[c][v].value_data
+          = file_src->module_data[src_sfp][src_mod].arr_channel_cfg[c][v].value_data;
       }
     }
   }
@@ -130,10 +144,11 @@ IMPLS(cp, module)
 IMPLS_HELP(cp, module)
 {
   printf("Copy module within one SFP or from one to another.\n"
-      "  src_sfp: Index of SFP (0 - 3) of the source module\n"
-      "  src_mod: Module number in given SFP chain to copy\n"
-      "  dst_sfp: Index of SFP (0 - 3) to which the copied modules should be inserted\n"
-      "  num: Number of identical copies to insert (Default: 1)\n\n"
+      "  src-sfp:   Index of SFP (0 - 3) of the source module\n"
+      "  src-mod:   Module number in given SFP chain to copy\n"
+      "  dst-sfp:   Index of SFP (0 - 3) to which the copied modules should be inserted\n"
+      "  num:       Number of identical copies to insert (Default: 1)\n"
+      "  src-file:  Source file to copy module from (Default: Active file)\n\n"
       "Note: The command will create <num> copies of one and the same source module.\n");
 
   return 1;

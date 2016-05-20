@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for F in $(ls presets/*.par); do
+  PNAME=${F:0:-4}
+  DESCR="${PNAME}_info.txt"
+
+  if [[ -f $DESCR ]]; then
+    INFO=$(cat $DESCR)
+  else
+    INFO=""
+  fi
+
+  echo "$(basename $PNAME): $INFO"
+done

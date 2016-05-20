@@ -1,0 +1,1 @@
+Example preset with a C3PO pulser in variying amplitude mode, 200 Hz self triggering.

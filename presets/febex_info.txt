@@ -1,0 +1,1 @@
+Default FEBEX 1.3 configuration, free running, timestamped mode.

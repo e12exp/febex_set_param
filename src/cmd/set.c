@@ -35,6 +35,7 @@ uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, i
 {
   char *path[5];
   int n = 0;
+  int mod_last, i;
 
   path[0] = strtok(variable, ".");
 
@@ -59,11 +60,20 @@ uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, i
     return 0;
   }
 
-  _set_get_interpret_range(path[1], module_first, module_last);
+  _set_get_interpret_range(path[1], module_first, &mod_last);
   if(*module_first < 0)
    *module_first = 0;
-  if(*module_last < 0)
-   *module_last = g_num_modules[*sfp_first] - 1;
+
+  if(mod_last < 0)
+  {
+    for(i = 0; i < 4; i++)
+    {
+      if(i < *sfp_first || i > *sfp_last)
+        module_last[i] = 0;
+      else
+        module_last[i] = g_num_modules[i] - 1;
+    }
+  }
 
   if(n == 3)
   {
@@ -97,15 +107,15 @@ IMPL(set)
   int64_t val_max;
   conf_value_def_t *vardef;
 
-  int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;
+  int sfp_first, sfp_last, module_first, module_last[4], channel_first, channel_last, sfp, mod, c;
   char *name;
 
-  if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, &module_last, &channel_first, &channel_last, &name))
+  if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, module_last, &channel_first, &channel_last, &name))
     return 0;
 
   for(sfp = sfp_first; sfp <= sfp_last; sfp++)
   {
-    for(mod = module_first; mod <= module_last; mod++)
+    for(mod = module_first; mod <= module_last[sfp]; mod++)
     {
       for(c = channel_first; c <= channel_last; c++)
       {
@@ -174,16 +184,16 @@ IMPL(get)
 
   int32_t val_min;
   int64_t val_max;
-  int sfp_first, sfp_last, module_first, module_last, channel_first, channel_last, sfp, mod, c;
+  int sfp_first, sfp_last, module_first, module_last[4], channel_first, channel_last, sfp, mod, c;
   char *name;
   conf_value_def_t *vardef;
 
-  if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, &module_last, &channel_first, &channel_last, &name))
+  if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, module_last, &channel_first, &channel_last, &name))
     return 0;
 
   for(sfp = sfp_first; sfp <= sfp_last; sfp++)
   {
-    for(mod = module_first; mod <= module_last; mod++)
+    for(mod = module_first; mod <= module_last[sfp]; mod++)
     {
       for(c = channel_first; c <= channel_last; c++)
       {

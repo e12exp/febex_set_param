@@ -37,6 +37,8 @@ uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, i
   int n = 0;
   int mod_last, i;
 
+  file_data_t *file = g_file_data[g_active_file];
+
   path[0] = strtok(variable, ".");
 
   while(path[n] && n < 4)
@@ -52,9 +54,9 @@ uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, i
   if(*sfp_first < 0)
     *sfp_first = 0;
   if(*sfp_last < 0)
-    *sfp_last = g_num_sfp - 1;
+    *sfp_last = file->num_sfp - 1;
 
-  if(*sfp_first > g_num_sfp || *sfp_last > g_num_sfp)
+  if(*sfp_first > file->num_sfp || *sfp_last > file->num_sfp)
   {
     printf("Invalid SFP\n");
     return 0;
@@ -71,7 +73,7 @@ uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, i
       if(i < *sfp_first || i > *sfp_last)
         module_last[i] = 0;
       else
-        module_last[i] = g_num_modules[i] - 1;
+        module_last[i] = file->num_modules[i] - 1;
     }
   }
 
@@ -102,13 +104,25 @@ IMPL(set)
 
 //  int32_t value = atoi(str_value);
   char *valend;
-  int32_t value = strtol(str_value, &valend, 0);
+  int32_t value;
   int32_t val_min;
   int64_t val_max;
   conf_value_def_t *vardef;
 
+  // Special treatment for binary values (0b...)
+  if(strlen(str_value) > 2 && strncmp(str_value, "0b", 2) == 0)
+  {
+    value = strtol(str_value + 2, &valend, 2);
+  }
+  else
+  {
+    value = strtol(str_value, &valend, 0);
+  }
+
   int sfp_first, sfp_last, module_first, module_last[4], channel_first, channel_last, sfp, mod, c;
   char *name;
+
+  file_data_t *file = g_file_data[g_active_file];
 
   if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, module_last, &channel_first, &channel_last, &name))
     return 0;
@@ -117,18 +131,21 @@ IMPL(set)
   {
     for(mod = module_first; mod <= module_last[sfp]; mod++)
     {
+      if(mod >= file->num_modules[sfp])
+        continue;
+
       for(c = channel_first; c <= channel_last; c++)
       {
-         if(c >= g_arr_module_data[sfp][mod].firmware->num_channels)
+         if(c >= file->module_data[sfp][mod].firmware->num_channels)
            continue;
 
-	 int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
+         int32_t *conf_val = module_data_get(file, sfp, mod, c, name, &val_min, &val_max, &vardef);
 
- 	 if(conf_val == NULL)
- 	 {
- 	   printf("Invalid configuration variable.\n");
- 	   return 0;
- 	 }
+         if(conf_val == NULL)
+         {
+           printf("Invalid configuration variable.\n");
+           return 0;
+         }
 
          if(vardef->type == conf_type_enum && valend == str_value)
          {
@@ -145,20 +162,20 @@ IMPL(set)
            return 0;
          }
 
-	 if(value < val_min || value > val_max)
-	 {
-	   printf("Value out of range. Allowed: %d - %" PRId64 "\n", val_min, val_max);
-	   return 0;
-	 }
+         if(value < val_min || value > val_max)
+         {
+           printf("Value out of range. Allowed: %d - %" PRId64 "\n", val_min, val_max);
+           return 0;
+         }
 
          if(vardef->hooks.set != NULL)
          {
            // If hook is defined, it will tell us whether to still set the variable or not
-           if((*vardef->hooks.set)(sfp, mod, c, name, &value) == 0)
+           if((*vardef->hooks.set)(file, sfp, mod, c, name, &value) == 0)
              *conf_val = value;
          }
          else
- 	  *conf_val = value;
+           *conf_val = value;
       }
     }
   }
@@ -188,6 +205,8 @@ IMPL(get)
   char *name;
   conf_value_def_t *vardef;
 
+  file_data_t *file = g_file_data[g_active_file];
+
   if(!_set_get_interpret_path(variable, &sfp_first, &sfp_last, &module_first, module_last, &channel_first, &channel_last, &name))
     return 0;
 
@@ -195,9 +214,12 @@ IMPL(get)
   {
     for(mod = module_first; mod <= module_last[sfp]; mod++)
     {
+      if(mod >= file->num_modules[sfp])
+        continue;
+
       for(c = channel_first; c <= channel_last; c++)
       {
-        int32_t *conf_val = module_data_get(sfp, mod, c, name, &val_min, &val_max, &vardef);
+        int32_t *conf_val = module_data_get(file, sfp, mod, c, name, &val_min, &val_max, &vardef);
         
         if(conf_val == NULL)
         {
@@ -206,7 +228,7 @@ IMPL(get)
         }
 
         if(vardef->hooks.get != NULL)
-          (*vardef->hooks.get)(sfp, mod, c, name, conf_val);
+          (*vardef->hooks.get)(file, sfp, mod, c, name, conf_val);
 
         if(c == -1)
           printf("%d.%03d.%-40s", sfp, mod, name);

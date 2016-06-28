@@ -22,38 +22,40 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  module_data_init();
+  file_data_init();
   register_vars();
   register_commands();
   g_display_level = beginner;
-  
-  if(readfile(argv[1]))
+
+  file_data_t *file = file_data_add(argv[1]);
+
+  if(readfile(file))
   {
-    fill_data_from_file();
+    fill_data_from_file(file);
   }
   else
     printf("Creating new database.\n");
 
-  
-  if (argc > 2) // batch mode
-    {
-      // I (MW) think, in batch mode, the "expert" display level should be fine
-      g_display_level = expert;
 
-      //interpret command returns 1 on success, 2 on error
-      //and 0 on quit
-      int res=interpret_command(argv[2], argc-3, &(argv[3]));
-      if (res == 1
-	  && strcmp("get", argv[2]) 
-	  && strcmp("list", argv[2])
-	  && strcmp("help", argv[2])
-	  )
-	{
-	  fill_regdata_from_module_data();
-	  res=write_file();
-	}
-      return res != 1;
+  if (argc > 2) // batch mode
+  {
+    // I (MW) think, in batch mode, the "expert" display level should be fine
+    g_display_level = expert;
+
+    //interpret command returns 1 on success, 2 on error
+    //and 0 on quit
+    int res=interpret_command(argv[2], argc-3, &(argv[3]));
+    if (res == 1
+        && strcmp("get", argv[2]) 
+        && strcmp("list", argv[2])
+        && strcmp("help", argv[2])
+       )
+    {
+      fill_regdata_from_module_data(file);
+      res=write_file(file);
     }
+    return res != 1;
+  }
 
   print_num_modules();
 

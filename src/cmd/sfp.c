@@ -10,7 +10,7 @@ IMPLS(add, sfp)
   ARGS_INIT
   ARG_INT(num)
 
-  int sfp_id = module_data_add_sfp(num);
+  int sfp_id = module_data_add_sfp(g_file_data[g_active_file], num);
 
   printf("ID of (last) inserted SFP: %d\n", sfp_id);
   

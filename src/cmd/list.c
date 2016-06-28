@@ -15,6 +15,8 @@ IMPL(list)
   ARG_INT(sfp)
   ARG_INT(mod)
 
+  file_data_t *file = g_file_data[g_active_file];
+
   int c, v, sfp_min, sfp_max, mod_min, mod_max, n_var;
   conf_value_data_t *var;
 
@@ -26,13 +28,13 @@ IMPL(list)
 
   if(sfp < 0)
   {
-    sfp_min = 0; sfp_max = g_num_sfp - 1;
+    sfp_min = 0; sfp_max = file->num_sfp - 1;
   }
   else
   {
     sfp_min = sfp_max = sfp;
   }
-  if(sfp_max >= g_num_sfp)
+  if(sfp_max >= file->num_sfp)
   {
     fprintf(stderr, "Invalid SFP\n");
     return 0;;
@@ -47,7 +49,7 @@ IMPL(list)
     mod_min = mod_max = mod;
   }
 
-  if(!(mod_max == -1 || mod_max < g_num_modules[sfp_max]))
+  if(!(mod_max == -1 || mod_max < file->num_modules[sfp_max]))
   {
     fprintf(stderr, "Invalid module\n");
     return 0;
@@ -57,9 +59,9 @@ IMPL(list)
   {
     printf("SFP %d\n", sfp);
 
-    for(mod = mod_min; mod <= (mod_max == -1 ? g_num_modules[sfp] - 1 : mod_max); mod++)
+    for(mod = mod_min; mod <= (mod_max == -1 ? file->num_modules[sfp] - 1 : mod_max); mod++)
     {
-      fw = g_arr_module_data[sfp][mod].firmware;
+      fw = file->module_data[sfp][mod].firmware;
 
       printf("+- Module %d\n", mod);
       printf("     Firmware %s (0x%08x - 0x%08x, Recommended 0x%08x)\n", fw->name, fw->fw_min, fw->fw_max,
@@ -75,9 +77,9 @@ IMPL(list)
         for(v = 0; v < n_var; v++)
         {
           if(c == -1)
-            var = &g_arr_module_data[sfp][mod].arr_global_cfg[v];
+            var = &file->module_data[sfp][mod].arr_global_cfg[v];
           else
-            var = &g_arr_module_data[sfp][mod].arr_channel_cfg[c][v];
+            var = &file->module_data[sfp][mod].arr_channel_cfg[c][v];
           
           if(g_display_level > var->value_def->display_level)
             continue;
@@ -87,7 +89,7 @@ IMPL(list)
 
           // Execute hook to get value
           if(var->value_def->hooks.get != NULL)
-            (*var->value_def->hooks.get)(sfp, mod, c, var->value_def->name, &var->value_data);
+            (*var->value_def->hooks.get)(file, sfp, mod, c, var->value_def->name, &var->value_data);
 
           if(var->value_def->vsigned)
           {

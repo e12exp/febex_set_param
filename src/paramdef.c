@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "paramdef.h"
+#include "data.h"
 
 uint16_t g_num_firmwares;
 

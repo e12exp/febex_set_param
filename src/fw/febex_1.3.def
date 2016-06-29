@@ -165,6 +165,7 @@ DEF_VAR(qpid_inv_d_minus_bc_over_a, conf_type_macro_qpid, 1, c_addr, 0, 0x0, 0x1
 DISPLAY_HIDDEN
 
 DEF_VAR_INT(num_events_readout, 1, 0, 0x18, 0x1f, 0)
+  HOOK_SET(hook_febex_13_check_buffer_size)
   DESCR("Threshold for the number of recorded events. As soon as one channel exceeds this number of recorded events, a readout request is issued.")
   CAT("Readout")
   DISPLAY_EXPERT
@@ -174,6 +175,7 @@ DEF_VAR_INT(num_events_readout, 1, 0, 0x18, 0x1f, 0)
 NEXT_REG
 
 DEF_VAR_INT(trace_length, 1, 0, 0x00, 0x0f, 0)
+  HOOK_SET(hook_febex_13_check_buffer_size)
   DESCR("Length of trace to record (if enabled by opmode_enable_trace).")
   UNIT("40 ns")
   CAT("Trace")
@@ -192,6 +194,7 @@ DEF_VAR_INT_SIGNED(tot_threshold, 1, 0, 0x00, 0x11, 0)
   CAT("Time Over Threshold")
 
 DEF_VAR_BOOL(tot_enabled, 1, 0, 0x18, 0)
+  HOOK_SET(hook_febex_13_check_buffer_size)
   DESCR("Enable Time Over Threshold measurement.")
   CAT("Time Over Threshold")
 
@@ -228,6 +231,7 @@ DEF_VAR_BOOL(opmode_run, 0, 4, 0, 0)
   CAT("Operation Mode")
 
 DEF_VAR_BOOL(opmode_enable_trace, 0, 4, 1, 0)
+  HOOK_SET(hook_febex_13_check_buffer_size)
   DESCR("Enable recording of traces.")
   CAT("Trace")
 

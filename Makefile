@@ -38,5 +38,5 @@ presets: $(patsubst %.par, %.db, $(wildcard presets/*.par))
 presets/%.db: presets/%.par $(TARGET_BIN)
 	@echo "Creating preset $@"
 	@rm -f $@
-	@./$(TARGET_BIN) $@ < $< &>/dev/null
+	@/bin/bash -c "./$(TARGET_BIN) $@ < $< &>/dev/null"
 

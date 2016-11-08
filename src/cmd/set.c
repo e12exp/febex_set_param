@@ -66,16 +66,23 @@ uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, i
   if(*module_first < 0)
    *module_first = 0;
 
-  if(mod_last < 0)
-  {
-    for(i = 0; i < 4; i++)
+  for(i = 0; i < 4; i++)
     {
       if(i < *sfp_first || i > *sfp_last)
         module_last[i] = 0;
       else
-        module_last[i] = file->num_modules[i] - 1;
+	if (mod_last<0) // ANY
+	  module_last[i] = file->num_modules[i] - 1;
+	else
+	  if (mod_last<=file->num_modules[i] - 1)
+	    module_last[i]=mod_last;
+	  else
+	    {
+	      printf("sfp %d: module index %d is out of range, the sfp has only %d modules!\n",
+		     i, mod_last, file->num_modules[i]);
+	      module_last[i]=file->num_modules[i] - 1;
+	    }
     }
-  }
 
   if(n == 3)
   {

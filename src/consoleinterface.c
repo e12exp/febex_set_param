@@ -76,7 +76,13 @@ void get_command(char *cmd, int *argc, char **argv)
   //fgets(buf, 256, stdin);
   //
   buf = readline("> ");
-
+  
+  if (!buf) // eof
+    {
+      buf=malloc(50);
+      strncpy(buf,"exit", 50);
+    }
+  
   l = strlen(buf) - 1;
   //buf[l] = 0;
 

@@ -1,7 +1,7 @@
 LIBS=-lreadline -lm
 
 GCC=gcc
-GCC_FLAGS=-g -Wall
+GCC_FLAGS=-g -Wall -m32
 
 TARGET_BIN=setpar
 

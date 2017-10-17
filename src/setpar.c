@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   file_data_init();
   register_vars();
   register_commands();
-  g_display_level = beginner;
+  g_display_level = expert; // If someone only wanted to change trigger threshold, xe would use DUCK. 
 
   file_data_t *file = file_data_add(argv[1]);
 

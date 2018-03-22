@@ -4,3 +4,4 @@ setpar
 .setpar.hist
 build
 presets/*.db
+*~

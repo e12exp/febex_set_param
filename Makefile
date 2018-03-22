@@ -1,6 +1,7 @@
-LIBS=-lreadline -lm
 
 GCC=gcc
+LIBS=-lm $(shell $(GCC) -m32 --print-file-name=libreadline.a ) $(shell $(GCC) -m32 --print-file-name=libtermcap.a )
+
 GCC_FLAGS=-g -Wall -m32
 
 TARGET_BIN=setpar
@@ -18,7 +19,7 @@ all: $(TARGET_BIN) presets
 
 $(TARGET_BIN): $(OBJ_BIN)
 	@/bin/bash -c "echo -e \"\e[1;33mLD\e[0m $@\""
-	@$(GCC) $(GCC_FLAGS) $+ $(LIBGOSIP_A) $(LIBS) -o $@
+	$(GCC)   $(GCC_FLAGS) $+ $(LIBGOSIP_A) $(LIBS) -o $@
 	@/bin/bash -c "echo -e \"\e[1;32mBuilding complete\e[0m\""
 
 o/%.o: src/%.c

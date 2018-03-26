@@ -45,7 +45,6 @@ typedef struct
   char *name;
   char *description; 
   char *unit;
-
   conf_type_t type;
 
   uint8_t global;
@@ -75,6 +74,16 @@ typedef struct s_conf_list
 }
 conf_list_t;
 
+#define NUMCATEGORIES 100
+#define PARAMSPERCATEGORY 20
+
+typedef struct
+{
+  char* name;
+  conf_value_def_t* params[PARAMSPERCATEGORY];
+} category_t;
+
+
 typedef struct
 {
   uint32_t id;
@@ -92,6 +101,7 @@ typedef struct
 
   conf_list_t *conf_list_first;
   conf_list_t *conf_list_current;
+  category_t * categories[NUMCATEGORIES];
 }
 firmware_def_t;
 
@@ -103,11 +113,13 @@ typedef struct s_firmware_list
 }
 firmware_list_t;
 
+
 extern uint8_t g_num_global_config_vars;
 extern uint8_t g_num_channel_config_vars;
 
 extern conf_list_t *g_conf_list_first;
 extern conf_list_t *g_conf_list_current;
+
 
 conf_value_def_t *conf_list_first(firmware_def_t *fw);
 conf_value_def_t *conf_list_next(firmware_def_t *fw);

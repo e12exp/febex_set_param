@@ -3,6 +3,7 @@
 
 #include "paramdef.h"
 #include "data.h"
+#include "assert.h"
 
 uint16_t g_num_firmwares;
 
@@ -10,36 +11,40 @@ firmware_list_t *g_fw_list_first;
 firmware_list_t *g_fw_list_current;
 
 #define DEF_FIRMWARE(_id, _name, _description, _channels, _fw_recommended, _fw_min, _fw_max) \
-  fw_l = (firmware_list_t*)malloc(sizeof(firmware_list_t)); \
-  fw_l->fw.id = _id; \
-  fw_l->fw.name = _name; \
-  fw_l->fw.description = _description; \
-  fw_l->fw.fw_min = _fw_min; \
-  fw_l->fw.fw_max = _fw_max; \
-  fw_l->fw.fw_recommended = _fw_recommended; \
-  fw_l->fw.num_channels = _channels; \
-  fw_l->fw.num_global_config_vars = 0; \
-  fw_l->fw.num_channel_config_vars = 0; \
-  fw_list_add(fw_l);
+  fw_l = (firmware_list_t*)malloc(sizeof(firmware_list_t));		\
+  fw_l->fw.id = _id;							\
+  fw_l->fw.name = _name;						\
+  fw_l->fw.description = _description;					\
+  fw_l->fw.fw_min = _fw_min;						\
+  fw_l->fw.fw_max = _fw_max;						\
+  fw_l->fw.fw_recommended = _fw_recommended;				\
+  fw_l->fw.num_channels = _channels;					\
+  fw_l->fw.num_global_config_vars = 0;					\
+  fw_l->fw.num_channel_config_vars = 0;					\
+  fw_l->fw.conf_list_current = NULL;					\
+  memset(fw_l->fw.categories, 0, sizeof(fw_l->fw.categories));		\
+  fw_list_add(fw_l);							\
+  ;
 
 #define BASE_ADDR(addr) c_addr = addr;
 
 #define DEF_VAR(_name, _type, _global, _addr, _offset, _low, _high, _shift, _signed) \
-  l = (conf_list_t*)calloc(1, sizeof(conf_list_t)); \
-  l->v.name = #_name; \
-  l->v.type = _type; \
-  l->v.global = _global; \
-  l->v.addr = _addr; \
-  l->v.channel_offset = _offset; \
+  l = (conf_list_t*)calloc(1, sizeof(conf_list_t));			\
+  l->v.name = #_name;							\
+  l->v.type = _type;							\
+  l->v.global = _global;						\
+  l->v.addr = _addr;							\
+  l->v.channel_offset = _offset;					\
   l->v.bitmask = (uint32_t)(((uint64_t)1 << ((uint64_t)_high + 1)) - 1); \
-  l->v.bitmask &= ~(uint32_t)(((uint64_t)1 << (uint64_t)_low) - 1); \
-  l->v.lowbit = _low; \
-  l->v.channel_shift = _shift; \
-  l->v.vsigned = _signed; \
-  l->v.display_level = fw_default_display_level; \
-  l->v.description = NULL; \
-  l->v.unit = NULL; \
-  conf_list_add(l, &g_fw_list_current->fw);
+  l->v.bitmask &= ~(uint32_t)(((uint64_t)1 << (uint64_t)_low) - 1);	\
+  l->v.lowbit = _low;							\
+  l->v.channel_shift = _shift;						\
+  l->v.vsigned = _signed;						\
+  l->v.display_level = fw_default_display_level;			\
+  l->v.description = NULL;						\
+  l->v.unit = NULL;							\
+  conf_list_add(l, &g_fw_list_current->fw);				\
+  ;
 
 #define DEF_VAR_INT(_name, _global, _offset, _low, _high, _shift) \
   DEF_VAR(_name, conf_type_int, _global, c_addr, _offset, _low, _high, _shift, 0)
@@ -60,8 +65,20 @@ firmware_list_t *g_fw_list_current;
 
 // Define description for parameter
 #define DESCR(_descr) l->v.description = _descr;
-// Define category for parameter (reserved for future use)
-#define CAT(_category)
+
+#define DECLCAT(_category, _section, _name)				\
+  category_t* _category=((category_t*) malloc(sizeof(category_t)));	\
+  _category->name=_name;							\
+  memset(_category->params, 0, sizeof(_category->params));		\
+  assert(_section<NUMCATEGORIES);					\
+  assert(g_fw_list_current->fw.categories[_section]==0);		\
+  g_fw_list_current->fw.categories[_section]=_category;			\
+  ;
+
+// Define category for parameter
+#define CAT(_category, _subsection) {int i=_subsection; while(i<PARAMSPERCATEGORY && _category->params[i]!=0) i++; assert(i<PARAMSPERCATEGORY); _category->params[i]=&(l->v);}
+
+
 // Define unit for parameter (reserved for future use)
 #define UNIT(_unit) l->v.unit = _unit;
 

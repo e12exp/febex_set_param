@@ -31,9 +31,12 @@ file_data_t *file_data_add(const char *filename)
 
   file = (file_data_t*)calloc(1, sizeof(file_data_t));
   file->version = FILEVERSION_RECENT;
-
+  memset(file->num_modules, 0, 4);
+  memset(file->module_data, 0, sizeof(module_data_t*) * 4);
+  file->num_sfp=0;
+  
   fname_len = strlen(filename);
-  file->filename = (char*)calloc(1, fname_len);
+  file->filename = (char*)calloc(1, fname_len+1);
   strcpy(file->filename, filename);
 
   g_file_data = file_data;
@@ -90,15 +93,8 @@ void file_data_free(file_data_t *file)
       }
       free(file->module_data[sfp]);
     }
-    free(file->module_data);
-    file->module_data = NULL;
   }
 
-  if(file->num_modules != NULL)
-  {
-    free(file->num_modules);
-    file->num_modules = NULL;
-  }
 
   if(file->filename != NULL)
   {
@@ -181,21 +177,11 @@ void module_data_free(module_data_t *data)
 
 uint8_t module_data_add_sfp(file_data_t *file, uint8_t num)
 {
-  uint8_t *tmp_num_modules = (uint8_t*)malloc(file->num_sfp + num);
-  module_data_t **tmp_arr_module_data = (module_data_t**)malloc(sizeof(module_data_t*) * (file->num_sfp + num));
-
-  if(file->num_modules != NULL)
-  {
-    memcpy(tmp_num_modules, file->num_modules, sizeof(uint8_t) * file->num_sfp);
-    memcpy(tmp_arr_module_data, file->module_data, sizeof(module_data_t*) * file->num_sfp);
-    free(file->num_modules);
-    free(file->module_data);
-  }
-
-  file->num_modules = tmp_num_modules;
-  file->module_data = tmp_arr_module_data;
-  memset(&file->num_modules[file->num_sfp], 0, num);
-  memset(&file->module_data[file->num_sfp], 0, sizeof(module_data_t*) * num);
+  if (file->num_sfp+num>4)
+    {
+      num=4-file->num_sfp;
+      fprintf(stderr, "Warning: can only add %d sfps (max total is 4)\n", num);
+    }
   file->num_sfp += num;
 
   return file->num_sfp - 1;

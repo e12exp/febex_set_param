@@ -109,7 +109,7 @@ IMPL(list)
           if(var->value_def->type == conf_type_mask)
           {
               printf(": 0b");
-              print_binary_val(var->value_data, val_max);
+              print_binary_val(var->value_data, var->value_data, val_max);
           }
           else if(var->value_def->type == conf_type_enum)
           {
@@ -131,7 +131,7 @@ IMPL(list)
           {
             printf(" (x %s)\n", var->value_def->unit);
           }
-          else if(var->value_def->type != conf_type_mask)
+          else 
           {
             printf("\n");
           }

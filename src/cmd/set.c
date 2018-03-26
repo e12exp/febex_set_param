@@ -31,7 +31,7 @@ uint8_t _set_get_interpret_range(char *range, int *min, int *max)
   return 1;
 }
 
-uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, int *module_first, int *module_last, int *channel_first, int *channel_last, char **name)
+uint8_t _set_get_interpret_path(char *variable, int *sfp_first, int *sfp_last, int *module_first, int module_last[4], int *channel_first, int *channel_last, char **name)
 {
   char *path[5];
   int n = 0;

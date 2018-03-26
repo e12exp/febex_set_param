@@ -79,7 +79,7 @@ void get_command(char *cmd, int *argc, char **argv)
   
   if (!buf) // eof
     {
-      buf=malloc(50);
+      buf=(char*)malloc(50);
       strncpy(buf,"exit", 50);
     }
   
@@ -121,7 +121,7 @@ void free_command(char *cmd, int argc, char **argv)
   unsigned int i;
 
   //free(cmd);
-  for(i = 0; i < argc; i++)
+  for(i = 0; i < (unsigned int) argc; i++)
     free(argv[i]);
   //free(argv);
 }

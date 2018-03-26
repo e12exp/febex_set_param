@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void print_binary_val(uint32_t val, uint32_t mask);
+void print_binary_val(uint32_t val0, uint32_t val1, uint32_t mask);
 
 #endif
 

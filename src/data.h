@@ -27,9 +27,9 @@ module_data_t;
 
 typedef struct s_file_data
 {
-  module_data_t   **module_data;
+  module_data_t   *(module_data[4]);
   uint8_t         num_sfp;
-  uint8_t         *num_modules;
+  uint8_t         num_modules[4];
 
   char            *filename;
   uint8_t         version;

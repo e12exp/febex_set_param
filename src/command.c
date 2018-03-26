@@ -98,7 +98,7 @@ uint8_t interpret_command(char *cmd, int argc, char **argv)
   if(strcmp(cmd, "lasagne") == 0)
     return print_lasagne();
 
-  for(i = 0; i < g_num_commands; i++)
+  for(i = 0; i < (unsigned int) g_num_commands; i++)
   {
     if(strcmp(cmd, commands[i].name) == 0)
     {

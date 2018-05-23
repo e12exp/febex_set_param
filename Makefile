@@ -2,7 +2,7 @@
 GCC=g++
 LIBS=-lm $(shell $(GCC) -m32 --print-file-name=libreadline.a ) $(shell $(GCC) -m32 --print-file-name=libtermcap.a )
 
-CXXFLAGS=-g -Wall -m32 -Wno-write-strings
+CXXFLAGS=-g -Wall -m32 -Wno-write-strings -std=c++0x -D__STDC_FORMAT_MACROS
 
 TARGET_BIN=setpar
 

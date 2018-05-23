@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h> //isatty
 
 #include "paramdef.h"
 #include "filestruct.h"
@@ -37,8 +38,11 @@ int main(int argc, char **argv)
     printf("Creating new database.\n");
 
 
+  g_is_batch=!isatty(fileno(stdin));
+
   if (argc > 2) // batch mode
   {
+    g_is_batch = 1;
     // I (MW) think, in batch mode, the "expert" display level should be fine
     g_display_level = expert;
 

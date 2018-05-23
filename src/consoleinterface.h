@@ -10,6 +10,7 @@ void get_command(char *cmd, int *argc, char **argv);
 void free_command(char *cmd, int argc, char **argv);
 
 extern display_level_t g_display_level;
+extern bool g_is_batch;
 
 #endif
 

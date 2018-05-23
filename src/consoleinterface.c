@@ -9,7 +9,7 @@
 #include "data.h"
 
 display_level_t g_display_level;
-
+bool g_is_batch;
 void print_num_modules()
 {
   uint8_t sfp;
@@ -52,6 +52,8 @@ void load_history()
 
 void f_add_history(char *str)
 {
+  if (g_is_batch)
+    return;
   FILE *fdhist;
   if(!(fdhist = fopen(".setpar.hist", "a")))
     return;

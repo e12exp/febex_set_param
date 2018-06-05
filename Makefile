@@ -22,18 +22,19 @@ $(TARGET_BIN): $(OBJ_BIN)
 	$(GCC)   $(CXXFLAGS) $+ $(LIBGOSIP_A) $(LIBS) -o $@
 	@/bin/bash -c "echo -e \"\e[1;32mBuilding complete\e[0m\""
 
-o/%.o: src/%.c o/cmd
+o/%.o: src/%.c o/.dirs
 	$(GCC) $(CXXFLAGS) -c $< -o $@
-o/%.o: src/%.cxx o/cmd
+
+o/%.o: src/%.cxx o/.dirs
 	$(GCC) $(CXXFLAGS) -c $< -o $@
 
 #	@/bin/bash -c "echo -e \"\e[1;33mCC\e[0m $@\""
 #	
 #	@$(GCC) $(GCC_FLAGS) -MM $< | sed 's!\(\w*\.o:\)!o/\1!g' > o/$*.d
 
-o/cmd:
+o/.dirs:
 	mkdir -p o/cmd o/fw/hooks
-
+	touch $@
 
 clean:
 	@rm -rf o $(TARGET_BIN) $(TARGET_STATIC) presets/*.db

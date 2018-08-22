@@ -53,13 +53,13 @@ IMPL(slist)
 	  num_dot++;
 	  if (num_dot==2)
 	    {
-	      memcpy(ch_wildcard, buf, i);
-	      ch_wildcard[i]=0;
+	      memcpy(mod_wildcard, buf, i);
+	      mod_wildcard[i]=0;
 	    }
 	  else if (num_dot==3)
 	    {	
-	      memcpy(mod_wildcard, buf, i);
-	      mod_wildcard[i]=0;      
+	      memcpy(ch_wildcard, buf, i);
+	      ch_wildcard[i]=0;      
 	    }
 	}
     assert(num_dot==3);

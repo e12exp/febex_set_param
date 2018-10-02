@@ -2,6 +2,7 @@
 #include "cmd/module.h"
 #include "cmd/list.h"
 #include "cmd/slist.h"
+#include "cmd/tlist.h"
 #include "cmd/firmware.h"
 #include "cmd/save.h"
 #include "cmd/set.h"
@@ -18,6 +19,7 @@ cmd_impl_t commands[] =
   CMDSH(cp, module, 3, ARGS("src-sfp", "src-module", "dst-sfp"), 2, ARGS(ARG(num, 1), ARG(src-file, -1))),
   CMDH(list, 0, ARGS(), 2, ARGS(ARG(sfp, -1), ARG(module, -1))),
   CMDH(slist, 0, ARGS(), 1, ARGS(ARG(channelspec, *.*.*))),
+  CMDH(tlist, 0, ARGS(), 1, ARGS(ARG(channelspec, *.*.*))),
   CMDH(save, 0, ARGS(), 0, ARGS()),
   CMDH(set, 2, ARGS("variable", "value"), 0, ARGS()),
   CMDH(get, 1, ARGS("variable"), 0, ARGS()),

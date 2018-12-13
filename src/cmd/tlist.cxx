@@ -122,12 +122,18 @@ IMPL(tlist)
     return 0;  // Note: module_last is an array -- no & needed. 
 
   firmware_def_t *fw=0;
+  int goodsfp=-1;
+  int goodmodule=-1;
+
   {
     for (sfp=sfp_first; sfp<=sfp_last; sfp++)
       for(mod = module_first; mod <= module_last[sfp]; mod++)
 	if (!fw)
-	  fw = file->module_data[sfp][mod].firmware;
-
+	  {
+	    fw = file->module_data[sfp][mod].firmware;
+	    goodsfp=sfp;
+	    goodmodule=mod;
+	  }
   
     if (!fw)
       {
@@ -179,7 +185,7 @@ IMPL(tlist)
   
   for (auto &name : modmatrix)
     {
-      auto res=module_data_get(file, 0, 0, -1, const_cast<char*>(name), 0, 0, &vardef);
+      auto res=module_data_get(file, goodsfp, goodmodule, -1, const_cast<char*>(name), 0, 0, &vardef);
       assert(res);
       assert(vardef);
       get_val_range(sfp_first, sfp_last, module_first, module_last,	
@@ -245,7 +251,7 @@ IMPL(tlist)
   int second_header=0;
   for (auto &name : chmatrix)
     {
-      auto res=module_data_get(file, 0, 0, 0, const_cast<char*>(name), 0, 0, &vardef);
+      auto res=module_data_get(file, goodsfp, goodmodule, 0, const_cast<char*>(name), 0, 0, &vardef);
       assert(res);
       assert(vardef);
       get_val_range(sfp_first, sfp_last, module_first, module_last,	

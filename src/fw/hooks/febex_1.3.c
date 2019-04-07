@@ -63,16 +63,17 @@ int hook_febex_13_check_buffer_size(file_data_t *file, uint8_t sfp, uint8_t modu
 
   size_per_event = 40 + (tot_enabled ? 12 : 0)
     + (opmode_enable_trace ? 8 + 2 * trace_length : 0);
+
   max_events = 8*1024 / size_per_event;
 
   if(num_events_readout >= max_events)
   {
-    fprintf(stderr, "Warning: A maximum of %d events will fit to the data buffer. Setting num_events_readout = %d\n", max_events, max_events - 1);
+    fprintf(stderr, "Warning: A maximum of %d events will fit to the data buffer. Setting num_events_readout = %d\n", max_events, max_events - 2);
 
     if(strcmp(varname, "num_events_readout") == 0)
-      *val = max_events - 1;
+      *val = max_events - 2;
     else
-      *module_data_get(file, sfp, module, -1, "num_events_readout", NULL, NULL, NULL) = max_events - 1;
+      *module_data_get(file, sfp, module, -1, "num_events_readout", NULL, NULL, NULL) = max_events - 2;
   }
 
   return 0;

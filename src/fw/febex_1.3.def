@@ -325,7 +325,7 @@ BASE_ADDR(0x3001c0)
 DEF_VAR_INT(trigger_timing_delay, 0, 4, 0, 7, 0)
   DESCR("Delay for timing trigger input. Used to adjust timing and validation trigger for coincidence.")
   UNIT("10 ns")
-  CAT(discr_branch, 5)
+  CAT(discr_trigger, 5)  
   DISPLAY_EXPERT
 
 DEF_VAR_INT(trigger_validation_gate_length, 0, 4, 8, 15, 0)

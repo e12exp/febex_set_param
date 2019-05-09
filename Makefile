@@ -15,6 +15,8 @@ OBJ_BIN=o/setpar.o o/filestruct.o o/readfile.o o/paramdef.o o/data.o o/consolein
 
 all: $(TARGET_BIN) presets
 
+febex_set_param: all
+
 -include $(OBJ_BIN:.o=.d)
 
 $(TARGET_BIN): $(OBJ_BIN)

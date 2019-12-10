@@ -7,6 +7,7 @@
 
 #include "consoleinterface.h"
 #include "data.h"
+#include "command.h"
 
 display_level_t g_display_level;
 bool g_is_batch;
@@ -61,25 +62,38 @@ void f_add_history(char *str)
   fclose(fdhist);
 }
 
-void get_command(char *cmd, int *argc, char **argv)
+void get_command(char *cmd, int *argc, char **argv, FILE* fd, char cmdline[512])
 {
-  //char buf[256];
+  // really, string processing in plain C?
+  // ok whatever floats your boat. --pklenze
+  cmdline[0]=0;
+
   static char *buf = NULL;
   int l;
   unsigned int n;
   char *tok;
-
+  int ret=0;
   if(buf != NULL)
     free(buf);
 
-  load_history();
+  if (!fd)
+    load_history();
 
-  //printf("> ");
-  //fgets(buf, 256, stdin);
-  //
-  buf = readline("> ");
-  
-  if (!buf) // eof
+  if (!fd)
+    buf = readline("> ");
+  else
+    {
+      buf=NULL;
+      size_t buflen=0;
+
+      ret=getline(&buf, &buflen, fd);
+      if (ret!=-1)
+	  buf[strlen(buf)-1]=0;
+      //fprintf(stderr, "read %d bytes: %s, is_eof:%d\n", ret, cmdline, feof(fd));
+    }
+  snprintf(cmdline, 512, "%s", buf);
+
+  if (!buf || ret<0) // eof
     {
       buf=(char*)malloc(50);
       strncpy(buf,"exit", 50);
@@ -88,7 +102,7 @@ void get_command(char *cmd, int *argc, char **argv)
   l = strlen(buf) - 1;
   //buf[l] = 0;
 
-  if(strlen(buf) != 0)
+  if(strlen(buf) != 0 && !fd)
   {
     add_history(buf);
     f_add_history(buf);
@@ -128,3 +142,38 @@ void free_command(char *cmd, int argc, char **argv)
   //free(argv);
 }
 
+
+int eval_print_loop(FILE* fd)
+{
+  // fd is either a file* to read from or 
+  // null (read from stdin, interactive mode
+  char cmdline[512];
+  uint8_t stat=1;
+  char cmd[64];
+  int cmd_argc;
+  char *cmd_argv[32];
+
+  do
+  {
+    get_command(cmd, &cmd_argc, cmd_argv, fd,cmdline);
+    if(cmd_argc == -1)
+    {
+      continue;
+    }
+    if (cmd[0]=='#' //preprocessor output
+	|| (cmd[0]=='/' && cmd[1]=='/') //comment
+	)
+      continue;
+    stat = interpret_command(cmd, cmd_argc, cmd_argv);
+    if (stat==2)
+      {
+	fprintf(stderr, "Command \"%s\" failed \n", cmdline);
+	if (fd)
+	  return -1;
+      }
+    free_command(cmd, cmd_argc, cmd_argv);
+    
+  }
+  while(stat);
+  return 0;
+}

@@ -28,9 +28,12 @@ IMPLS(add, module)
 
   int module_id = module_data_add_module(g_file_data[g_active_file], sfp, num, fw_id);
 
-  printf("ID of (last) inserted module: %d\n", module_id);
 
-  print_num_modules(); 
+  if (!g_is_batch)
+    {  
+      printf("ID of (last) inserted module: %d\n", module_id);
+      print_num_modules(); 
+    }
 
   return 1;
 }

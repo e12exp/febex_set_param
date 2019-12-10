@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> //isatty
+#include <assert.h>
 
 #include "paramdef.h"
 #include "filestruct.h"
@@ -12,21 +13,34 @@
 
 int main(int argc, char **argv)
 {
-  uint8_t stat;
-  char cmd[64];
-  int cmd_argc;
-  char *cmd_argv[32];
+  int empty=0;
+  char *progname=argv[0];
+  if (argc>1 && !strcmp(argv[1], "--empty" ))
+    {
+      // for batch mode:
+      // unlink the file, so the user can start with a clean slate
+      empty=1;
+      argc--;
+      argv++;
+    }
 
   if(argc < 2)
   {
-    fprintf(stderr, "Usage: %s file [cmd [cmd args]]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [--empty] file [cmd [cmd args]]\n", progname);
     return -1;
   }
+  if (empty)
+    {
+      fprintf(stderr, "Removing %s, if existing. ", argv[1]);
+      unlink(argv[1]);
+    }
+
 
   file_data_init();
   register_vars();
   register_commands();
   g_display_level = expert; // If someone only wanted to change trigger threshold, xe would use DUCK. 
+  g_is_batch=!isatty(fileno(stdin)) || argc > 2;
 
   file_data_t *file = file_data_add(argv[1]);
 
@@ -35,14 +49,10 @@ int main(int argc, char **argv)
     fill_data_from_file(file);
   }
   else
-    printf("Creating new database.\n");
-
-
-  g_is_batch=!isatty(fileno(stdin));
+    fprintf(stderr, "Creating new database.\n");
 
   if (argc > 2) // batch mode
   {
-    g_is_batch = 1;
     // I (MW) think, in batch mode, the "expert" display level should be fine
     g_display_level = expert;
 
@@ -63,21 +73,7 @@ int main(int argc, char **argv)
 
   print_num_modules();
 
-  stat = 1;
-
-  do
-  {
-    get_command(cmd, &cmd_argc, cmd_argv);
-    if(cmd_argc == -1)
-    {
-      continue;
-    }
-    stat = interpret_command(cmd, cmd_argc, cmd_argv);
-    if (stat==2)
-      fprintf(stderr, "Command failed!\n");
-    free_command(cmd, cmd_argc, cmd_argv);
-  }
-  while(stat);
+  eval_print_loop(NULL);
 
   printf("Bye!\n");
 

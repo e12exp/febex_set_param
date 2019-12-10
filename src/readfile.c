@@ -2,7 +2,7 @@
 #include "filestruct.h"
 #include "data.h"
 #include "paramdef.h"
-
+#include "consoleinterface.h"
 int readfile(file_data_t *file)
 {
   FILE *fconf;
@@ -113,7 +113,8 @@ int readfile(file_data_t *file)
 
   fclose(fconf);
 
-  fprintf(stderr, "Read configuration from file %s. File version: %d. File number: %d\n", file->filename, file->version, g_num_files-1);
+  if (!g_is_batch)
+    fprintf(stderr, "Read configuration from file %s. File version: %d. File number: %d\n", file->filename, file->version, g_num_files-1);
 
   return 1;
 }

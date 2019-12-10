@@ -129,7 +129,6 @@ uint8_t interpret_command(char *cmd, int argc, char **argv)
   }
 
   fprintf(stderr, "Unkown command %s.\n", cmd);
-
   return 2;
 }
 
